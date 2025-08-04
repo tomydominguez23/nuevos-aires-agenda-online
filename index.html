@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nuevos Aires Huecuraba - Agenda Online</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            500: '#ec4899',
+                            600: '#db2777',
+                            700: '#be185d'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState } = React;
+
+        const App = () => {
+            const [activeTab, setActiveTab] = useState('agenda');
+            const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
+
+            const profesionales = [
+                { id: 1, nombre: 'María González', especialidad: 'Estilista Senior', color: '#FF6B6B' },
+                { id: 2, nombre: 'Carlos Ruiz', especialidad: 'Estilista', color: '#4ECDC4' },
+                { id: 3, nombre: 'Ana López', especialidad: 'Estilista', color: '#45B7D1' },
+                { id: 4, nombre: 'Sofía Martín', especialidad: 'Colorista/Recepción', color: '#96CEB4' }
+            ];
+
+            const servicios = [
+                { id: 1, nombre: 'Corte Mujer', precio: 25000, duracion: 45 },
+                { id: 2, nombre: 'Corte Hombre', precio: 18000, duracion: 30 },
+                { id: 3, nombre: 'Peinado', precio: 30000, duracion: 60 },
+                { id: 4, nombre: 'Tinte', precio: 45000, duracion: 120 },
+                { id: 5, nombre: 'Mechas', precio: 55000, duracion: 180 }
+            ];
+
+            const citas = [
+                {
+                    id: 1,
+                    clienteNombre: 'Laura Pérez',
+                    profesionalId: 1,
+                    servicioId: 1,
+                    fecha: selectedDate,
+                    hora: '10:00',
+                    estado: 'confirmada'
+                },
+                {
+                    id: 2,
+                    clienteNombre: 'Roberto Silva',
+                    profesionalId: 2,
+                    servicioId: 4,
+                    fecha: selectedDate,
+                    hora: '14:30',
+                    estado: 'pendiente'
+                },
+                {
+                    id: 3,
+                    clienteNombre: 'Carmen Torres',
+                    profesionalId: 1,
+                    servicioId: 3,
+                    fecha: selectedDate,
+                    hora: '16:00',
+                    estado: 'confirmada'
+                }
+            ];
+
+            const clientes = [
+                { id: 1, nombre: 'Laura Pérez', telefono: '+56912345678', totalGastado: 180000, vip: true },
+                { id: 2, nombre: 'Roberto Silva', telefono: '+56987654321', totalGastado: 85000, vip: false },
+                { id: 3, nombre: 'Carmen Torres', telefono: '+56955555555', totalGastado: 320000, vip: true }
+            ];
+
+            const inventario = [
+                { id: 1, nombre: 'Shampoo Reparador', stock: 15, stockMinimo: 5, precio: 12000 },
+                { id: 2, nombre: 'Tinte Chocolate', stock: 3, stockMinimo: 5, precio: 8500 },
+                { id: 3, nombre: 'Acondicionador', stock: 8, stockMinimo: 5, precio: 13000 }
+            ];
+
+            const getProfesionalNombre = (id) => {
+                const prof = profesionales.find(p => p.id === id);
+                return prof ? prof.nombre : 'No asignado';
+            };
+
+            const getServicioNombre = (id) => {
+                const serv = servicios.find(s => s.id === id);
+                return serv ? serv.nombre : 'Sin servicio';
+            };
+
+            const getEstadoColor = (estado) => {
+                switch(estado) {
+                    case 'confirmada': return 'text-green-600 bg-green-100';
+                    case 'pendiente': return 'text-yellow-600 bg-yellow-100';
+                    case 'cancelada': return 'text-red-600 bg-red-100';
+                    default: return 'text-gray-600 bg-gray-100';
+                }
+            };
+
+            const formatPrice = (price) => `$${price.toLocaleString('es-CL')}`;
+
+            const tabs = [
+                { id: 'agenda', name: 'Agenda', icon: '📅' },
+                { id: 'clientes', name: 'Clientes', icon: '👥' },
+                { id: 'inventario', name: 'Inventario', icon: '📦' },
+                { id: 'finanzas', name: 'Finanzas', icon: '💰' },
+                { id: 'marketing', name: 'Marketing', icon: '📱' },
+                { id: 'configuracion', name: 'Configuración', icon: '⚙️' }
+            ];
+
+            return (
+                <div className="min-h-screen bg-gray-50">
+                    {/* Header */}
+                    <header className="bg-gradient-to-r from-primary-500 to-primary-700 shadow-lg">
+                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                            <div className="flex justify-between items-center h-16">
+                                <div className="flex items-center">
+                                    <span className="text-2xl mr-3">✂️</span>
+                                    <h1 className="text-xl font-bold text-white">Nuevos Aires Huecuraba</h1>
+                                </div>
+                                <div className="text-white text-sm">
+                                    Sistema de Agenda Online
+                                </div>
+                            </div>
+                        </div>
+                    </header>
+
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                        {/* Navigation */}
+                        <nav className="flex flex-wrap space-x-2 mb-8 bg-white p-4 rounded-lg shadow">
+                            {tabs.map(tab => (
+                                <button
+                                    key={tab.id}
+                                    onClick={() => setActiveTab(tab.id)}
+                                    className={`flex items-center px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                                        activeTab === tab.id
+                                            ? 'bg-primary-500 text-white'
+                                            : 'text-gray-600 hover:text-primary-600 hover:bg-gray-100'
+                                    }`}
+                                >
+                                    <span className="mr-2">{tab.icon}</span>
+                                    {tab.name}
+                                </button>
+                            ))}
+                        </nav>
+
+                        {/* Contenido */}
+                        {activeTab === 'agenda' && (
+                            <div className="space-y-6">
+                                <div className="bg-white rounded-lg shadow p-6">
+                                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-4 sm:space-y-0">
+                                        <h2 className="text-xl font-semibold text-gray-900">Agenda del Día</h2>
+                                        <input
+                                            type="date"
+                                            value={selectedDate}
+                                            onChange={(e) => setSelectedDate(e.target.value)}
+                                            className="border border-gray-300 rounded-md px-3 py-2"
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="bg-white rounded-lg shadow overflow-hidden">
+                                    <table className="min-w-full divide-y divide-gray-200">
+                                        <thead className="bg-gray-50">
+                                            <tr>
+                                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Hora</th>
+                                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Cliente</th>
+                                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Profesional</th>
+                                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Servicio</th>
+                                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Estado</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="bg-white divide-y divide-gray-200">
+                                            {citas.map(cita => (
+                                                <tr key={cita.id} className="hover:bg-gray-50">
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                                        {cita.hora}
+                                                    </td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                                        {cita.clienteNombre}
+                                                    </td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                                        {getProfesionalNombre(cita.profesionalId)}
+                                                    </td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                                        {getServicioNombre(cita.servicioId)}
+                                                    </td>
+                                                    <td className="px-6 py-4 whitespace-nowrap">
+                                                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getEstadoColor(cita.estado)}`}>
+                                                            {cita.estado}
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        )}
+
+                        {activeTab === 'clientes' && (
+                            <div className="bg-white rounded-lg shadow p-6">
+                                <h2 className="text-xl font-semibold text-gray-900 mb-4">Gestión de Clientes</h2>
+                                <div className="grid gap-4">
+                                    {clientes.map(cliente => (
+                                        <div key={cliente.id} className="border border-gray-200 rounded-lg p-4">
+                                            <div className="flex justify-between items-center">
+                                                <div>
+                                                    <h3 className="font-medium text-gray-900">
+                                                        {cliente.nombre} {cliente.vip && <span className="text-yellow-500">⭐</span>}
+                                                    </h3>
+                                                    <p className="text-gray-600">{cliente.telefono}</p>
+                                                </div>
+                                                <div className="text-right">
+                                                    <p className="font-semibold text-gray-900">{formatPrice(cliente.totalGastado)}</p>
+                                                    <p className="text-sm text-gray-600">Total gastado</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {activeTab === 'inventario' && (
+                            <div className="bg-white rounded-lg shadow p-6">
+                                <h2 className="text-xl font-semibold text-gray-900 mb-4">Control de Inventario</h2>
+                                <div className="grid gap-4">
+                                    {inventario.map(producto => (
+                                        <div key={producto.id} className="border border-gray-200 rounded-lg p-4">
+                                            <div className="flex justify-between items-center">
+                                                <div>
+                                                    <h3 className="font-medium text-gray-900">{producto.nombre}</h3>
+                                                    <p className="text-gray-600">Stock: {producto.stock}</p>
+                                                </div>
+                                                <div className="text-right">
+                                                    <p className="font-semibold text-gray-900">{formatPrice(producto.precio)}</p>
+                                                    {producto.stock <= producto.stockMinimo && (
+                                                        <span className="text-red-600 text-sm">⚠️ Stock bajo</span>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {activeTab === 'finanzas' && (
+                            <div className="bg-white rounded-lg shadow p-6">
+                                <h2 className="text-xl font-semibold text-gray-900 mb-4">Panel Financiero</h2>
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                    <div className="bg-green-50 p-4 rounded-lg">
+                                        <h3 className="text-lg font-semibold text-green-800">Ingresos Hoy</h3>
+                                        <p className="text-2xl font-bold text-green-900">$185.000</p>
+                                    </div>
+                                    <div className="bg-blue-50 p-4 rounded-lg">
+                                        <h3 className="text-lg font-semibold text-blue-800">Ingresos Mes</h3>
+                                        <p className="text-2xl font-bold text-blue-900">$3.750.000</p>
+                                    </div>
+                                    <div className="bg-yellow-50 p-4 rounded-lg">
+                                        <h3 className="text-lg font-semibold text-yellow-800">Comisiones</h3>
+                                        <p className="text-2xl font-bold text-yellow-900">$450.000</p>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {activeTab === 'marketing' && (
+                            <div className="bg-white rounded-lg shadow p-6">
+                                <h2 className="text-xl font-semibold text-gray-900 mb-4">Marketing Automatizado</h2>
+                                <div className="space-y-4">
+                                    <div className="border border-gray-200 rounded-lg p-4">
+                                        <h3 className="font-medium text-gray-900">Recordatorios de Cita</h3>
+                                        <p className="text-gray-600">Envío automático 24h antes</p>
+                                        <span className="text-green-600 text-sm">✅ Activo</span>
+                                    </div>
+                                    <div className="border border-gray-200 rounded-lg p-4">
+                                        <h3 className="font-medium text-gray-900">Recuperación de Clientes</h3>
+                                        <p className="text-gray-600">Para clientes sin visita por 60 días</p>
+                                        <span className="text-green-600 text-sm">✅ Activo</span>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {activeTab === 'configuracion' && (
+                            <div className="bg-white rounded-lg shadow p-6">
+                                <h2 className="text-xl font-semibold text-gray-900 mb-4">Configuración</h2>
+                                <div className="space-y-6">
+                                    <div>
+                                        <h3 className="text-lg font-medium text-gray-900 mb-2">Información del Salón</h3>
+                                        <div className="grid gap-4">
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-700">Nombre</label>
+                                                <input type="text" value="Nuevos Aires Huecuraba" className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2" />
+                                            </div>
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-700">Dirección</label>
+                                                <input type="text" value="Av. Pedro Fontova 6651, local 27" className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <h3 className="text-lg font-medium text-gray-900 mb-2">Profesionales</h3>
+                                        <div className="space-y-2">
+                                            {profesionales.map(prof => (
+                                                <div key={prof.id} className="flex justify-between items-center p-2 border border-gray-200 rounded">
+                                                    <span>{prof.nombre} - {prof.especialidad}</span>
+                                                    <button className="text-primary-600 hover:text-primary-800">Editar</button>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            );
+        };
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>
