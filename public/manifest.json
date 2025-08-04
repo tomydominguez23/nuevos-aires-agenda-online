@@ -1,0 +1,120 @@
+{
+  "short_name": "Nuevos Aires",
+  "name": "Nuevos Aires Huecuraba - Sistema de Agenda Online",
+  "description": "Sistema integral de gestión para salón de belleza con reservas, inventario, finanzas y marketing automatizado",
+  "icons": [
+    {
+      "src": "favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "logo192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "logo512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    },
+    {
+      "src": "maskable-icon-192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "maskable"
+    },
+    {
+      "src": "maskable-icon-512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "maskable"
+    }
+  ],
+  "id": "nuevos-aires-agenda",
+  "start_url": "./",
+  "display": "standalone",
+  "theme_color": "#ec4899",
+  "background_color": "#ffffff",
+  "orientation": "portrait-primary",
+  "scope": "./",
+  "lang": "es",
+  "dir": "ltr",
+  "prefer_related_applications": false,
+  "categories": [
+    "business",
+    "productivity",
+    "lifestyle"
+  ],
+  "shortcuts": [
+    {
+      "name": "Nueva Cita",
+      "short_name": "Cita",
+      "description": "Agendar una nueva cita",
+      "url": "./?action=nueva-cita",
+      "icons": [
+        {
+          "src": "icons/calendar-icon-96.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Ver Agenda",
+      "short_name": "Agenda",
+      "description": "Ver agenda del día",
+      "url": "./?action=agenda",
+      "icons": [
+        {
+          "src": "icons/schedule-icon-96.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Clientes",
+      "short_name": "Clientes",
+      "description": "Gestionar clientes",
+      "url": "./?action=clientes",
+      "icons": [
+        {
+          "src": "icons/users-icon-96.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Inventario",
+      "short_name": "Stock",
+      "description": "Revisar inventario",
+      "url": "./?action=inventario",
+      "icons": [
+        {
+          "src": "icons/inventory-icon-96.png",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "screenshots/desktop-agenda.png",
+      "type": "image/png",
+      "sizes": "1280x720",
+      "form_factor": "wide",
+      "label": "Vista de agenda en escritorio"
+    },
+    {
+      "src": "screenshots/mobile-agenda.png",
+      "type": "image/png",
+      "sizes": "390x844",
+      "form_factor": "narrow",
+      "label": "Vista de agenda en móvil"
+    }
+  ],
+  "related_applications": [],
+  "iarc_rating_id": "",
+  "edge_side_panel": {
+    "preferred_width": 400
+  }
+}
