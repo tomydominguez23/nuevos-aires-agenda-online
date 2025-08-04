@@ -4,13 +4,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nuevos Aires Huecuraba - Sistema de Agenda Online</title>
+    <meta name="description" content="Sistema de agenda online profesional para Nuevos Aires Huecuraba. Gestión integral de citas, clientes, inventario y finanzas.">
+    
+    <!-- React & Babel -->
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#ec4899">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Nuevos Aires">
+    
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✂️</text></svg>">
     
     <script>
         tailwind.config = {
@@ -28,10 +44,30 @@
                             700: '#be185d',
                             800: '#9d174d',
                             900: '#831843'
+                        },
+                        secondary: {
+                            50: '#f0f9ff',
+                            500: '#0ea5e9',
+                            600: '#0284c7'
                         }
                     },
                     fontFamily: {
                         'inter': ['Inter', 'sans-serif']
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-in-out',
+                        'slide-up': 'slideUp 0.3s ease-out',
+                        'pulse-soft': 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite'
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' }
+                        },
+                        slideUp: {
+                            '0%': { transform: 'translateY(10px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' }
+                        }
                     }
                 }
             }
@@ -45,6 +81,7 @@
             padding: 0;
             background: #f8fafc;
         }
+        
         .loading {
             display: flex;
             justify-content: center;
@@ -54,146 +91,274 @@
             color: white;
             font-size: 24px;
         }
+        
+        .glassmorphism {
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+        
+        .scroll-smooth {
+            scroll-behavior: smooth;
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #ec4899;
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #be185d;
+        }
+        
+        /* Animation classes */
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        
+        .animate-slide-up {
+            animation: slideUp 0.3s ease-out;
+        }
     </style>
 </head>
-<body>
+<body class="scroll-smooth">
     <div id="root">
         <div class="loading">
-            <div>
-                <div style="text-align: center;">
-                    <div style="font-size: 48px; margin-bottom: 20px;">✂️</div>
-                    <div>Cargando Nuevos Aires Huecuraba...</div>
-                    <div style="font-size: 14px; margin-top: 10px; opacity: 0.8;">Sistema de Agenda Online</div>
+            <div style="text-align: center;">
+                <div style="font-size: 48px; margin-bottom: 20px; animation: pulse 2s infinite;">✂️</div>
+                <div style="font-weight: 600;">Cargando Nuevos Aires Huecuraba...</div>
+                <div style="font-size: 14px; margin-top: 10px; opacity: 0.8;">Sistema de Agenda Online Profesional</div>
+                <div style="margin-top: 20px; font-size: 12px; opacity: 0.6;">
+                    <div style="display: inline-block; width: 30px; height: 4px; background: rgba(255,255,255,0.3); border-radius: 2px; margin: 0 2px; animation: pulse 1s infinite;"></div>
+                    <div style="display: inline-block; width: 30px; height: 4px; background: rgba(255,255,255,0.3); border-radius: 2px; margin: 0 2px; animation: pulse 1s infinite 0.2s;"></div>
+                    <div style="display: inline-block; width: 30px; height: 4px; background: rgba(255,255,255,0.3); border-radius: 2px; margin: 0 2px; animation: pulse 1s infinite 0.4s;"></div>
                 </div>
             </div>
         </div>
     </div>
 
     <script type="text/babel">
-        const { useState, useEffect } = React;
+        const { useState, useEffect, useMemo } = React;
 
         const NuevosAiresApp = () => {
             const [activeTab, setActiveTab] = useState('agenda');
             const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
             const [searchTerm, setSearchTerm] = useState('');
             const [loading, setLoading] = useState(true);
+            const [notifications, setNotifications] = useState([]);
 
             useEffect(() => {
-                // Simular carga inicial
-                setTimeout(() => setLoading(false), 1000);
+                // Simular carga inicial con progress
+                setTimeout(() => setLoading(false), 1500);
+                
+                // Simular notificaciones
+                setTimeout(() => {
+                    setNotifications([
+                        { id: 1, type: 'info', message: 'Sistema cargado correctamente', time: new Date() },
+                        { id: 2, type: 'warning', message: '3 productos con stock bajo', time: new Date() }
+                    ]);
+                }, 2000);
             }, []);
 
-            // Datos del salón
+            // Datos del salón actualizados
             const salonInfo = {
                 nombre: 'Nuevos Aires Huecuraba',
-                direccion: 'Av. Pedro Fontova 6651, local 27',
+                direccion: 'Av. Pedro Fontova 6651, Local 27, Huechuraba',
                 telefono: '+56 9 1234 5678',
-                email: 'contacto@nuevosaireshuechuraba.com'
+                email: 'contacto@nuevosaireshuecuraba.com',
+                horarios: {
+                    'Lun-Vie': '09:00 - 19:00',
+                    'Sábado': '09:00 - 18:00',
+                    'Domingo': 'Cerrado'
+                },
+                redes: {
+                    instagram: '@nuevosaireshuecuraba',
+                    facebook: 'Nuevos Aires Huecuraba'
+                }
             };
 
-            // Profesionales
+            // Profesionales actualizados
             const profesionales = [
-                { id: 1, nombre: 'María González', especialidad: 'Estilista Senior', color: '#FF6B6B', activo: true },
-                { id: 2, nombre: 'Carlos Ruiz', especialidad: 'Estilista', color: '#4ECDC4', activo: true },
-                { id: 3, nombre: 'Ana López', especialidad: 'Estilista', color: '#45B7D1', activo: true },
-                { id: 4, nombre: 'Sofía Martín', especialidad: 'Colorista/Recepción', color: '#96CEB4', activo: true }
-            ];
-
-            // Servicios
-            const servicios = [
-                { id: 1, nombre: 'Corte Mujer', precio: 25000, duracion: 45, categoria: 'Corte' },
-                { id: 2, nombre: 'Corte Hombre', precio: 18000, duracion: 30, categoria: 'Corte' },
-                { id: 3, nombre: 'Peinado', precio: 30000, duracion: 60, categoria: 'Peinado' },
-                { id: 4, nombre: 'Tinte', precio: 45000, duracion: 120, categoria: 'Color' },
-                { id: 5, nombre: 'Mechas', precio: 55000, duracion: 180, categoria: 'Color' },
-                { id: 6, nombre: 'Tratamiento Capilar', precio: 35000, duracion: 90, categoria: 'Tratamiento' },
-                { id: 7, nombre: 'Manicure', precio: 15000, duracion: 45, categoria: 'Uñas' },
-                { id: 8, nombre: 'Pedicure', precio: 18000, duracion: 60, categoria: 'Uñas' }
-            ];
-
-            // Citas
-            const [citas] = useState([
-                {
-                    id: 1,
-                    clienteNombre: 'Laura Pérez',
-                    profesionalId: 1,
-                    servicioId: 1,
-                    fecha: selectedDate,
-                    hora: '10:00',
-                    estado: 'confirmada',
-                    notas: 'Primera vez en el salón'
+                { 
+                    id: 1, 
+                    nombre: 'María González', 
+                    especialidad: 'Estilista Senior', 
+                    color: '#FF6B6B', 
+                    activo: true,
+                    horario: '09:00-18:00',
+                    servicios: ['Corte', 'Peinado', 'Tratamientos'],
+                    experiencia: '8 años'
                 },
-                {
-                    id: 2,
-                    clienteNombre: 'Roberto Silva',
-                    profesionalId: 2,
-                    servicioId: 4,
-                    fecha: selectedDate,
-                    hora: '14:30',
-                    estado: 'pendiente',
-                    notas: 'Cambio de look radical'
+                { 
+                    id: 2, 
+                    nombre: 'Carlos Ruiz', 
+                    especialidad: 'Especialista en Color', 
+                    color: '#4ECDC4', 
+                    activo: true,
+                    horario: '10:00-19:00',
+                    servicios: ['Tinte', 'Mechas', 'Balayage'],
+                    experiencia: '6 años'
                 },
-                {
-                    id: 3,
-                    clienteNombre: 'Carmen Torres',
-                    profesionalId: 1,
-                    servicioId: 3,
-                    fecha: selectedDate,
-                    hora: '16:00',
-                    estado: 'confirmada',
-                    notas: 'Evento especial'
+                { 
+                    id: 3, 
+                    nombre: 'Ana López', 
+                    especialidad: 'Estilista', 
+                    color: '#45B7D1', 
+                    activo: true,
+                    horario: '09:00-17:00',
+                    servicios: ['Corte', 'Peinado', 'Novias'],
+                    experiencia: '4 años'
+                },
+                { 
+                    id: 4, 
+                    nombre: 'Sofía Martín', 
+                    especialidad: 'Manicurista/Recepción', 
+                    color: '#96CEB4', 
+                    activo: true,
+                    horario: '09:00-18:00',
+                    servicios: ['Manicure', 'Pedicure', 'Uñas Esculpidas'],
+                    experiencia: '3 años'
                 }
-            ]);
+            ];
 
-            // Clientes
+            // Servicios mejorados y actualizados
+            const servicios = [
+                { id: 1, nombre: 'Corte Mujer', precio: 28000, duracion: 45, categoria: 'Corte', descripcion: 'Corte personalizado según tu estilo' },
+                { id: 2, nombre: 'Corte Hombre', precio: 20000, duracion: 30, categoria: 'Corte', descripcion: 'Corte clásico y moderno' },
+                { id: 3, nombre: 'Peinado Evento', precio: 35000, duracion: 60, categoria: 'Peinado', descripcion: 'Peinado elegante para ocasiones especiales' },
+                { id: 4, nombre: 'Tinte Global', precio: 48000, duracion: 120, categoria: 'Color', descripcion: 'Coloración completa del cabello' },
+                { id: 5, nombre: 'Mechas/Highlights', precio: 65000, duracion: 180, categoria: 'Color', descripcion: 'Mechas tradicionales o balayage' },
+                { id: 6, nombre: 'Tratamiento Keratina', precio: 85000, duracion: 150, categoria: 'Tratamiento', descripcion: 'Alisado y nutrición profunda' },
+                { id: 7, nombre: 'Manicure Spa', precio: 18000, duracion: 45, categoria: 'Uñas', descripcion: 'Manicure completa con tratamiento' },
+                { id: 8, nombre: 'Pedicure Spa', precio: 22000, duracion: 60, categoria: 'Uñas', descripcion: 'Pedicure relajante con hidratación' },
+                { id: 9, nombre: 'Uñas Acrílicas', precio: 25000, duracion: 90, categoria: 'Uñas', descripcion: 'Extensión de uñas con acrílico' },
+                { id: 10, nombre: 'Peinado Novia', precio: 65000, duracion: 120, categoria: 'Peinado', descripción: 'Peinado especial para novias' }
+            ];
+
+            // Generar citas dinámicas
+            const generarCitas = () => {
+                const horasDisponibles = ['09:00', '10:30', '12:00', '14:00', '15:30', '17:00'];
+                const estados = ['confirmada', 'pendiente', 'cancelada'];
+                const clientesEjemplo = [
+                    'Laura Pérez', 'Roberto Silva', 'Carmen Torres', 'Ana Gómez', 'Pedro Morales',
+                    'Isabella Cruz', 'Diego Herrera', 'Valentina López', 'Sebastián Ruiz', 'Camila Díaz'
+                ];
+                
+                return horasDisponibles.map((hora, index) => ({
+                    id: index + 1,
+                    clienteNombre: clientesEjemplo[index % clientesEjemplo.length],
+                    clienteTelefono: '+56912345' + (100 + index).toString().slice(-3),
+                    profesionalId: (index % 4) + 1,
+                    servicioId: (index % servicios.length) + 1,
+                    fecha: selectedDate,
+                    hora: hora,
+                    estado: estados[index % estados.length],
+                    notas: index % 3 === 0 ? 'Primera vez en el salón' : index % 3 === 1 ? 'Cliente VIP' : 'Cita regular',
+                    precio: servicios[index % servicios.length].precio,
+                    duracion: servicios[index % servicios.length].duracion
+                })).slice(0, Math.min(6, Math.floor(Math.random() * 6) + 3)); // Entre 3-6 citas por día
+            };
+
+            const [citas, setCitas] = useState(generarCitas());
+
+            // Regenerar citas cuando cambie la fecha
+            useEffect(() => {
+                setCitas(generarCitas());
+            }, [selectedDate]);
+
+            // Clientes mejorados
             const clientes = [
                 {
                     id: 1,
                     nombre: 'Laura Pérez',
                     telefono: '+56912345678',
-                    email: 'laura@email.com',
-                    ultimaVisita: '2025-07-20',
-                    totalGastado: 180000,
-                    vip: true
+                    email: 'laura.perez@email.com',
+                    ultimaVisita: '2025-07-28',
+                    totalGastado: 285000,
+                    vip: true,
+                    fechaNacimiento: '1992-03-15',
+                    serviciosFrecuentes: ['Corte Mujer', 'Tinte Global'],
+                    notas: 'Prefiere citas en la mañana'
                 },
                 {
                     id: 2,
                     nombre: 'Roberto Silva',
                     telefono: '+56987654321',
-                    email: 'roberto@email.com',
-                    ultimaVisita: '2025-07-28',
-                    totalGastado: 85000,
-                    vip: false
+                    email: 'roberto.silva@email.com',
+                    ultimaVisita: '2025-08-01',
+                    totalGastado: 120000,
+                    vip: false,
+                    fechaNacimiento: '1985-11-22',
+                    serviciosFrecuentes: ['Corte Hombre'],
+                    notas: 'Corte cada 3 semanas'
                 },
                 {
                     id: 3,
                     nombre: 'Carmen Torres',
                     telefono: '+56955555555',
-                    email: 'carmen@email.com',
-                    ultimaVisita: '2025-08-01',
-                    totalGastado: 320000,
-                    vip: true
+                    email: 'carmen.torres@email.com',
+                    ultimaVisita: '2025-07-30',
+                    totalGastado: 450000,
+                    vip: true,
+                    fechaNacimiento: '1978-07-08',
+                    serviciosFrecuentes: ['Mechas/Highlights', 'Peinado Evento'],
+                    notas: 'Cliente desde 2018'
+                },
+                {
+                    id: 4,
+                    nombre: 'Isabella Cruz',
+                    telefono: '+56966666666',
+                    email: 'isabella.cruz@email.com',
+                    ultimaVisita: '2025-08-02',
+                    totalGastado: 180000,
+                    vip: false,
+                    fechaNacimiento: '1995-12-03',
+                    serviciosFrecuentes: ['Manicure Spa', 'Corte Mujer'],
+                    notas: 'Estudiante - descuento aplicado'
                 }
             ];
 
-            // Inventario
+            // Inventario mejorado
             const inventario = [
-                { id: 1, nombre: 'Shampoo Reparador', categoria: 'Cuidado Capilar', stock: 15, stockMinimo: 5, precio: 12000 },
-                { id: 2, nombre: 'Acondicionador', categoria: 'Cuidado Capilar', stock: 8, stockMinimo: 5, precio: 13000 },
-                { id: 3, nombre: 'Tinte Chocolate', categoria: 'Coloración', stock: 3, stockMinimo: 5, precio: 8500 },
-                { id: 4, nombre: 'Tijeras Profesionales', categoria: 'Herramientas', stock: 12, stockMinimo: 3, precio: 45000 },
-                { id: 5, nombre: 'Esmalte Rojo', categoria: 'Uñas', stock: 20, stockMinimo: 8, precio: 3500 }
+                { id: 1, nombre: 'Shampoo Reparador L\'Oreal', categoria: 'Cuidado Capilar', stock: 15, stockMinimo: 5, precio: 18500, proveedor: 'L\'Oreal Professional' },
+                { id: 2, nombre: 'Acondicionador Hidratante', categoria: 'Cuidado Capilar', stock: 8, stockMinimo: 5, precio: 16800, proveedor: 'L\'Oreal Professional' },
+                { id: 3, nombre: 'Tinte Chocolate 5.35', categoria: 'Coloración', stock: 3, stockMinimo: 5, precio: 12500, proveedor: 'Wella' },
+                { id: 4, nombre: 'Oxidante 20vol', categoria: 'Coloración', stock: 20, stockMinimo: 8, precio: 8900, proveedor: 'Wella' },
+                { id: 5, nombre: 'Tijeras Profesionales Jaguar', categoria: 'Herramientas', stock: 2, stockMinimo: 2, precio: 125000, proveedor: 'Jaguar' },
+                { id: 6, nombre: 'Esmalte OPI - Rojo Clásico', categoria: 'Uñas', stock: 20, stockMinimo: 8, precio: 8500, proveedor: 'OPI' },
+                { id: 7, nombre: 'Lima Profesional 180/240', categoria: 'Uñas', stock: 25, stockMinimo: 10, precio: 2500, proveedor: 'CND' },
+                { id: 8, nombre: 'Keratina Brasileña 1L', categoria: 'Tratamiento', stock: 4, stockMinimo: 3, precio: 85000, proveedor: 'Brazilian Blowout' }
             ];
 
-            // Funciones auxiliares
+            // Funciones auxiliares mejoradas
             const getProfesionalNombre = (id) => {
                 const prof = profesionales.find(p => p.id === id);
                 return prof ? prof.nombre : 'No asignado';
             };
 
+            const getProfesionalColor = (id) => {
+                const prof = profesionales.find(p => p.id === id);
+                return prof ? prof.color : '#6B7280';
+            };
+
             const getServicioNombre = (id) => {
                 const serv = servicios.find(s => s.id === id);
                 return serv ? serv.nombre : 'Sin servicio';
+            };
+
+            const getServicioPrecio = (id) => {
+                const serv = servicios.find(s => s.id === id);
+                return serv ? serv.precio : 0;
             };
 
             const getEstadoColor = (estado) => {
@@ -205,546 +370,819 @@
                 }
             };
 
+            const getEstadoIcon = (estado) => {
+                switch(estado) {
+                    case 'confirmada': return '✅';
+                    case 'pendiente': return '⏳';
+                    case 'cancelada': return '❌';
+                    default: return '📅';
+                }
+            };
+
             const formatPrice = (price) => `$${price.toLocaleString('es-CL')}`;
 
+            const formatDate = (dateString) => {
+                return new Date(dateString).toLocaleDateString('es-CL', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+            };
+
+            // Pestañas de navegación
             const tabs = [
-                { id: 'agenda', name: 'Agenda', icon: '📅' },
-                { id: 'clientes', name: 'Clientes', icon: '👥' },
-                { id: 'inventario', name: 'Inventario', icon: '📦' },
-                { id: 'finanzas', name: 'Finanzas', icon: '💰' },
-                { id: 'marketing', name: 'Marketing', icon: '📱' },
-                { id: 'configuracion', name: 'Configuración', icon: '⚙️' }
+                { id: 'agenda', name: 'Agenda', icon: '📅', description: 'Gestión de citas' },
+                { id: 'clientes', name: 'Clientes', icon: '👥', description: 'Base de datos' },
+                { id: 'inventario', name: 'Inventario', icon: '📦', description: 'Control de stock' },
+                { id: 'finanzas', name: 'Finanzas', icon: '💰', description: 'Reportes e ingresos' },
+                { id: 'marketing', name: 'Marketing', icon: '📱', description: 'Campañas automáticas' },
+                { id: 'configuracion', name: 'Config', icon: '⚙️', description: 'Configuración' }
             ];
 
-            const citasFiltradas = citas.filter(cita => 
-                cita.fecha === selectedDate &&
-                (searchTerm === '' || 
-                 cita.clienteNombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                 getProfesionalNombre(cita.profesionalId).toLowerCase().includes(searchTerm.toLowerCase()))
-            );
+            // Filtrar citas
+            const citasFiltradas = useMemo(() => {
+                return citas.filter(cita => 
+                    cita.fecha === selectedDate &&
+                    (searchTerm === '' || 
+                     cita.clienteNombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                     getProfesionalNombre(cita.profesionalId).toLowerCase().includes(searchTerm.toLowerCase()) ||
+                     getServicioNombre(cita.servicioId).toLowerCase().includes(searchTerm.toLowerCase()))
+                );
+            }, [citas, selectedDate, searchTerm]);
+
+            // Estadísticas
+            const estadisticas = useMemo(() => {
+                const citasHoy = citasFiltradas.length;
+                const confirmadas = citasFiltradas.filter(c => c.estado === 'confirmada').length;
+                const pendientes = citasFiltradas.filter(c => c.estado === 'pendiente').length;
+                const canceladas = citasFiltradas.filter(c => c.estado === 'cancelada').length;
+                const ingresosDia = citasFiltradas.filter(c => c.estado === 'confirmada').reduce((total, cita) => total + getServicioPrecio(cita.servicioId), 0);
+                
+                return { citasHoy, confirmadas, pendientes, canceladas, ingresosDia };
+            }, [citasFiltradas]);
 
             if (loading) {
                 return (
                     <div className="loading">
                         <div style={{textAlign: 'center'}}>
-                            <div style={{fontSize: '48px', marginBottom: '20px'}}>✂️</div>
-                            <div>Cargando Nuevos Aires Huecuraba...</div>
-                            <div style={{fontSize: '14px', marginTop: '10px', opacity: 0.8}}>Sistema de Agenda Online</div>
+                            <div style={{fontSize: '48px', marginBottom: '20px', animation: 'pulse 2s infinite'}}>✂️</div>
+                            <div style={{fontWeight: '600'}}>Cargando Nuevos Aires Huecuraba...</div>
+                            <div style={{fontSize: '14px', marginTop: '10px', opacity: 0.8}}>Sistema de Agenda Online Profesional</div>
+                            <div style={{marginTop: '20px', fontSize: '12px', opacity: 0.6}}>
+                                <div style={{display: 'inline-block', width: '30px', height: '4px', background: 'rgba(255,255,255,0.3)', borderRadius: '2px', margin: '0 2px', animation: 'pulse 1s infinite'}}></div>
+                                <div style={{display: 'inline-block', width: '30px', height: '4px', background: 'rgba(255,255,255,0.3)', borderRadius: '2px', margin: '0 2px', animation: 'pulse 1s infinite 0.2s'}}></div>
+                                <div style={{display: 'inline-block', width: '30px', height: '4px', background: 'rgba(255,255,255,0.3)', borderRadius: '2px', margin: '0 2px', animation: 'pulse 1s infinite 0.4s'}}></div>
+                            </div>
                         </div>
                     </div>
                 );
             }
 
             return (
-                <div className="min-h-screen bg-gray-50 font-inter">
+                <div className="min-h-screen bg-gray-50 font-inter animate-fade-in">
                     {/* Header */}
-                    <header className="bg-gradient-to-r from-primary-500 to-primary-700 shadow-lg">
+                    <header className="bg-gradient-to-r from-primary-500 via-primary-600 to-primary-700 shadow-xl">
                         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                             <div className="flex justify-between items-center h-16">
                                 <div className="flex items-center">
-                                    <span className="text-3xl mr-3">✂️</span>
+                                    <span className="text-3xl mr-3 animate-pulse-soft">✂️</span>
                                     <div>
-                                        <h1 className="text-xl font-bold text-white">Nuevos Aires Huecuraba</h1>
-                                        <p className="text-primary-100 text-sm">Sistema de Agenda Online</p>
+                                        <h1 className="text-xl font-bold text-white">{salonInfo.nombre}</h1>
+                                        <p className="text-primary-100 text-sm hidden sm:block">Sistema de Agenda Online Profesional</p>
                                     </div>
                                 </div>
                                 <div className="text-white text-sm text-right">
-                                    <div className="font-medium">Administrador</div>
-                                    <div className="text-primary-200">{new Date().toLocaleDateString('es-CL')}</div>
+                                    <div className="font-medium">Panel Administrativo</div>
+                                    <div className="text-primary-200">{formatDate(new Date().toISOString().split('T')[0])}</div>
                                 </div>
                             </div>
                         </div>
                     </header>
 
+                    {/* Notificaciones */}
+                    {notifications.length > 0 && (
+                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4">
+                            {notifications.map(notif => (
+                                <div key={notif.id} className={`mb-2 p-4 rounded-lg border-l-4 animate-slide-up ${
+                                    notif.type === 'info' ? 'bg-blue-50 border-blue-400 text-blue-800' :
+                                    notif.type === 'warning' ? 'bg-yellow-50 border-yellow-400 text-yellow-800' :
+                                    'bg-red-50 border-red-400 text-red-800'
+                                }`}>
+                                    <div className="flex justify-between items-center">
+                                        <span className="text-sm font-medium">{notif.message}</span>
+                                        <button 
+                                            onClick={() => setNotifications(notifications.filter(n => n.id !== notif.id))}
+                                            className="text-gray-400 hover:text-gray-600"
+                                        >
+                                            ×
+                                        </button>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                        {/* Navigation */}
-                        <nav className="flex flex-wrap gap-2 mb-8 bg-white p-4 rounded-xl shadow-sm">
+                        {/* Navigation mejorada */}
+                        <nav className="flex flex-wrap gap-2 mb-8 bg-white p-4 rounded-xl shadow-lg border border-gray-100">
                             {tabs.map(tab => (
                                 <button
                                     key={tab.id}
                                     onClick={() => setActiveTab(tab.id)}
-                                    className={`flex items-center px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                                    className={`group flex flex-col items-center px-4 py-3 rounded-lg text-sm font-medium transition-all duration-300 transform hover:scale-105 ${
                                         activeTab === tab.id
-                                            ? 'bg-primary-500 text-white shadow-md transform scale-105'
+                                            ? 'bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-lg shadow-primary-500/25'
                                             : 'text-gray-600 hover:text-primary-600 hover:bg-primary-50'
                                     }`}
+                                    title={tab.description}
                                 >
-                                    <span className="mr-2 text-base">{tab.icon}</span>
-                                    {tab.name}
+                                    <span className="text-lg mb-1 group-hover:animate-bounce">{tab.icon}</span>
+                                    <span className="text-xs">{tab.name}</span>
                                 </button>
                             ))}
                         </nav>
 
                         {/* Contenido por pestañas */}
-                        {activeTab === 'agenda' && (
-                            <div className="space-y-6">
-                                {/* Controles */}
-                                <div className="bg-white rounded-xl shadow-sm p-6">
-                                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-4 sm:space-y-0">
-                                        <h2 className="text-2xl font-bold text-gray-900">Agenda del Día</h2>
-                                        <div className="flex flex-col sm:flex-row gap-4">
-                                            <input
-                                                type="date"
-                                                value={selectedDate}
-                                                onChange={(e) => setSelectedDate(e.target.value)}
-                                                className="border border-gray-300 rounded-lg px-3 py-2 focus:ring-primary-500 focus:border-primary-500"
-                                            />
-                                            <input
-                                                type="text"
-                                                placeholder="Buscar cliente..."
-                                                value={searchTerm}
-                                                onChange={(e) => setSearchTerm(e.target.value)}
-                                                className="border border-gray-300 rounded-lg px-3 py-2 focus:ring-primary-500 focus:border-primary-500"
-                                            />
-                                            <button className="bg-primary-500 text-white px-6 py-2 rounded-lg hover:bg-primary-600 transition-colors font-medium">
-                                                + Nueva Cita
+                        <div className="animate-slide-up">
+                            {activeTab === 'agenda' && (
+                                <div className="space-y-6">
+                                    {/* Controles de agenda */}
+                                    <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
+                                        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-4 sm:space-y-0">
+                                            <div>
+                                                <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+                                                    📅 Agenda del Día
+                                                </h2>
+                                                <p className="text-gray-600 mt-1">Gestiona las citas y horarios del salón</p>
+                                            </div>
+                                            <div className="flex flex-col sm:flex-row gap-4">
+                                                <input
+                                                    type="date"
+                                                    value={selectedDate}
+                                                    onChange={(e) => setSelectedDate(e.target.value)}
+                                                    className="border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
+                                                />
+                                                <input
+                                                    type="text"
+                                                    placeholder="🔍 Buscar cliente, profesional..."
+                                                    value={searchTerm}
+                                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                                    className="border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors min-w-64"
+                                                />
+                                                <button className="bg-gradient-to-r from-primary-500 to-primary-600 text-white px-6 py-2 rounded-lg hover:from-primary-600 hover:to-primary-700 transition-all duration-200 font-medium shadow-md hover:shadow-lg transform hover:scale-105">
+                                                    + Nueva Cita
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Estadísticas mejoradas */}
+                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+                                        {[
+                                            { label: 'Citas Hoy', value: estadisticas.citasHoy, color: 'blue', icon: '📅', bgGradient: 'from-blue-500 to-blue-600' },
+                                            { label: 'Confirmadas', value: estadisticas.confirmadas, color: 'green', icon: '✅', bgGradient: 'from-green-500 to-green-600' },
+                                            { label: 'Pendientes', value: estadisticas.pendientes, color: 'yellow', icon: '⏳', bgGradient: 'from-yellow-500 to-yellow-600' },
+                                            { label: 'Canceladas', value: estadisticas.canceladas, color: 'red', icon: '❌', bgGradient: 'from-red-500 to-red-600' },
+                                            { label: 'Ingresos Día', value: formatPrice(estadisticas.ingresosDia), color: 'purple', icon: '💰', bgGradient: 'from-purple-500 to-purple-600' }
+                                        ].map((stat, i) => (
+                                            <div key={i} className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-primary-500 hover:shadow-xl transition-shadow duration-200">
+                                                <div className="flex items-center justify-between mb-4">
+                                                    <div className={`p-3 rounded-full bg-gradient-to-r ${stat.bgGradient} text-white shadow-lg`}>
+                                                        <span className="text-xl">{stat.icon}</span>
+                                                    </div>
+                                                </div>
+                                                <p className="text-sm font-medium text-gray-600 mb-1">{stat.label}</p>
+                                                <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
+                                            </div>
+                                        ))}
+                                    </div>
+
+                                    {/* Lista de citas mejorada */}
+                                    <div className="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100">
+                                        <div className="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-gray-100">
+                                            <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                                                🗓️ Citas Programadas - {formatDate(selectedDate)}
+                                            </h3>
+                                        </div>
+                                        
+                                        {citasFiltradas.length > 0 ? (
+                                            <div className="divide-y divide-gray-200">
+                                                {citasFiltradas.map(cita => (
+                                                    <div key={cita.id} className="p-6 hover:bg-gray-50 transition-colors duration-200">
+                                                        <div className="flex items-center justify-between">
+                                                            <div className="flex items-center space-x-4">
+                                                                <div className="flex flex-col items-center">
+                                                                    <div className="text-2xl mb-1">🕐</div>
+                                                                    <div className="text-sm font-bold text-gray-900">{cita.hora}</div>
+                                                                </div>
+                                                                
+                                                                <div className="h-12 w-px bg-gray-300"></div>
+                                                                
+                                                                <div>
+                                                                    <h4 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                                                                        👤 {cita.clienteNombre}
+                                                                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full border ${getEstadoColor(cita.estado)}`}>
+                                                                            {getEstadoIcon(cita.estado)} {cita.estado.charAt(0).toUpperCase() + cita.estado.slice(1)}
+                                                                        </span>
+                                                                    </h4>
+                                                                    <div className="flex items-center gap-4 text-sm text-gray-600 mt-1">
+                                                                        <span className="flex items-center gap-1">
+                                                                            <div 
+                                                                                className="w-3 h-3 rounded-full" 
+                                                                                style={{backgroundColor: getProfesionalColor(cita.profesionalId)}}
+                                                                            ></div>
+                                                                            {getProfesionalNombre(cita.profesionalId)}
+                                                                        </span>
+                                                                        <span>✂️ {getServicioNombre(cita.servicioId)}</span>
+                                                                        <span>⏱️ {cita.duracion} min</span>
+                                                                        <span className="font-semibold text-primary-600">{formatPrice(getServicioPrecio(cita.servicioId))}</span>
+                                                                    </div>
+                                                                    {cita.notas && (
+                                                                        <p className="text-sm text-gray-500 mt-1 italic">📝 {cita.notas}</p>
+                                                                    )}
+                                                                </div>
+                                                            </div>
+                                                            
+                                                            <div className="flex flex-col sm:flex-row gap-2">
+                                                                <button 
+                                                                    className="bg-blue-500 text-white px-3 py-2 rounded-lg hover:bg-blue-600 transition-colors text-sm font-medium shadow-md hover:shadow-lg transform hover:scale-105"
+                                                                    title="Ver detalles"
+                                                                >
+                                                                    👁️ Ver
+                                                                </button>
+                                                                <button 
+                                                                    className="bg-green-500 text-white px-3 py-2 rounded-lg hover:bg-green-600 transition-colors text-sm font-medium shadow-md hover:shadow-lg transform hover:scale-105"
+                                                                    title="Editar cita"
+                                                                >
+                                                                    ✏️ Editar
+                                                                </button>
+                                                                <button 
+                                                                    className="bg-emerald-500 text-white px-3 py-2 rounded-lg hover:bg-emerald-600 transition-colors text-sm font-medium shadow-md hover:shadow-lg transform hover:scale-105"
+                                                                    title="Enviar WhatsApp"
+                                                                    onClick={() => window.open(`https://wa.me/${cita.clienteTelefono.replace(/[^0-9]/g, '')}?text=Hola ${cita.clienteNombre}, te recordamos tu cita para ${cita.hora} en ${salonInfo.nombre}`, '_blank')}
+                                                                >
+                                                                    📱 WhatsApp
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        ) : (
+                                            <div className="py-12 text-center">
+                                                <div className="text-6xl mb-4">📅</div>
+                                                <div className="text-xl font-semibold text-gray-900 mb-2">No hay citas para esta fecha</div>
+                                                <div className="text-gray-600">Selecciona otra fecha o agenda una nueva cita</div>
+                                                <button className="mt-4 bg-primary-500 text-white px-6 py-2 rounded-lg hover:bg-primary-600 transition-colors font-medium">
+                                                    + Agendar Primera Cita
+                                                </button>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            )}
+
+                            {activeTab === 'clientes' && (
+                                <div className="space-y-6">
+                                    <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
+                                        <div className="flex justify-between items-center">
+                                            <div>
+                                                <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+                                                    👥 Gestión de Clientes
+                                                </h2>
+                                                <p className="text-gray-600 mt-1">Base de datos completa de clientes</p>
+                                            </div>
+                                            <button className="bg-gradient-to-r from-primary-500 to-primary-600 text-white px-6 py-2 rounded-lg hover:from-primary-600 hover:to-primary-700 transition-all duration-200 font-medium shadow-md hover:shadow-lg transform hover:scale-105">
+                                                + Nuevo Cliente
                                             </button>
                                         </div>
                                     </div>
-                                </div>
 
-                                {/* Estadísticas */}
-                                <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                                    {[
-                                        { label: 'Citas Hoy', value: citasFiltradas.length, color: 'blue', icon: '📅' },
-                                        { label: 'Confirmadas', value: citasFiltradas.filter(c => c.estado === 'confirmada').length, color: 'green', icon: '✅' },
-                                        { label: 'Pendientes', value: citasFiltradas.filter(c => c.estado === 'pendiente').length, color: 'yellow', icon: '⏳' },
-                                        { label: 'Canceladas', value: citasFiltradas.filter(c => c.estado === 'cancelada').length, color: 'red', icon: '❌' }
-                                    ].map((stat, i) => (
-                                        <div key={i} className="bg-white rounded-xl shadow-sm p-6 border-l-4 border-primary-500">
-                                            <div className="flex items-center justify-between">
-                                                <div>
-                                                    <p className="text-sm font-medium text-gray-600">{stat.label}</p>
-                                                    <p className="text-3xl font-bold text-gray-900">{stat.value}</p>
-                                                </div>
-                                                <span className="text-3xl">{stat.icon}</span>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-
-                                {/* Lista de citas */}
-                                <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-                                    <div className="px-6 py-4 border-b border-gray-200 bg-gray-50">
-                                        <h3 className="text-lg font-semibold text-gray-900">Citas del Día</h3>
-                                    </div>
-                                    <div className="overflow-x-auto">
-                                        <table className="min-w-full divide-y divide-gray-200">
-                                            <thead className="bg-gray-50">
-                                                <tr>
-                                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Hora</th>
-                                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cliente</th>
-                                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Profesional</th>
-                                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Servicio</th>
-                                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
-                                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody className="bg-white divide-y divide-gray-200">
-                                                {citasFiltradas.length > 0 ? citasFiltradas.map(cita => (
-                                                    <tr key={cita.id} className="hover:bg-gray-50 transition-colors">
-                                                        <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">
-                                                            🕐 {cita.hora}
-                                                        </td>
-                                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                            {cita.clienteNombre}
-                                                        </td>
-                                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                            {getProfesionalNombre(cita.profesionalId)}
-                                                        </td>
-                                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                            {getServicioNombre(cita.servicioId)}
-                                                        </td>
-                                                        <td className="px-6 py-4 whitespace-nowrap">
-                                                            <span className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full border ${getEstadoColor(cita.estado)}`}>
-                                                                {cita.estado.charAt(0).toUpperCase() + cita.estado.slice(1)}
-                                                            </span>
-                                                        </td>
-                                                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                                            <div className="flex space-x-2">
-                                                                <button className="text-blue-600 hover:text-blue-900 transition-colors">👁️</button>
-                                                                <button className="text-green-600 hover:text-green-900 transition-colors">✏️</button>
-                                                                <button className="text-red-600 hover:text-red-900 transition-colors">🗑️</button>
-                                                                <button className="text-green-600 hover:text-green-900 transition-colors">📱</button>
+                                    <div className="grid gap-6">
+                                        {clientes.map(cliente => (
+                                            <div key={cliente.id} className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-primary-500 hover:shadow-xl transition-shadow duration-200">
+                                                <div className="flex justify-between items-start">
+                                                    <div className="flex items-center space-x-4">
+                                                        <div className="w-16 h-16 bg-gradient-to-r from-primary-500 to-primary-600 rounded-full flex items-center justify-center text-white font-bold text-xl shadow-lg">
+                                                            {cliente.nombre.charAt(0)}
+                                                        </div>
+                                                        <div>
+                                                            <h3 className="text-xl font-semibold text-gray-900 flex items-center gap-2">
+                                                                {cliente.nombre}
+                                                                {cliente.vip && <span className="text-yellow-500 text-2xl animate-pulse">⭐</span>}
+                                                            </h3>
+                                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-1 text-sm text-gray-600 mt-2">
+                                                                <p className="flex items-center gap-2">📞 <a href={`tel:${cliente.telefono}`} className="hover:text-primary-600 transition-colors">{cliente.telefono}</a></p>
+                                                                <p className="flex items-center gap-2">📧 <a href={`mailto:${cliente.email}`} className="hover:text-primary-600 transition-colors">{cliente.email}</a></p>
+                                                                <p className="flex items-center gap-2">📅 Última visita: {formatDate(cliente.ultimaVisita)}</p>
+                                                                <p className="flex items-center gap-2">🎂 Cumpleaños: {formatDate(cliente.fechaNacimiento)}</p>
                                                             </div>
-                                                        </td>
-                                                    </tr>
-                                                )) : (
-                                                    <tr>
-                                                        <td colSpan="6" className="px-6 py-8 text-center text-gray-500">
-                                                            <div className="text-4xl mb-2">📅</div>
-                                                            <div>No hay citas para esta fecha</div>
-                                                        </td>
-                                                    </tr>
-                                                )}
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                        )}
-
-                        {activeTab === 'clientes' && (
-                            <div className="space-y-6">
-                                <div className="bg-white rounded-xl shadow-sm p-6">
-                                    <div className="flex justify-between items-center">
-                                        <h2 className="text-2xl font-bold text-gray-900">Gestión de Clientes</h2>
-                                        <button className="bg-primary-500 text-white px-6 py-2 rounded-lg hover:bg-primary-600 transition-colors font-medium">
-                                            + Nuevo Cliente
-                                        </button>
-                                    </div>
-                                </div>
-
-                                <div className="grid gap-6">
-                                    {clientes.map(cliente => (
-                                        <div key={cliente.id} className="bg-white rounded-xl shadow-sm p-6 border-l-4 border-primary-500">
-                                            <div className="flex justify-between items-start">
-                                                <div className="flex items-center space-x-4">
-                                                    <div className="w-12 h-12 bg-primary-500 rounded-full flex items-center justify-center text-white font-bold text-lg">
-                                                        {cliente.nombre.charAt(0)}
-                                                    </div>
-                                                    <div>
-                                                        <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-                                                            {cliente.nombre}
-                                                            {cliente.vip && <span className="text-yellow-500 text-xl">⭐</span>}
-                                                        </h3>
-                                                        <div className="space-y-1 text-sm text-gray-600">
-                                                            <p>📞 {cliente.telefono}</p>
-                                                            <p>📧 {cliente.email}</p>
-                                                            <p>📅 Última visita: {new Date(cliente.ultimaVisita).toLocaleDateString('es-CL')}</p>
+                                                            <div className="mt-2">
+                                                                <p className="text-sm text-gray-600 mb-1">✂️ Servicios frecuentes:</p>
+                                                                <div className="flex flex-wrap gap-1">
+                                                                    {cliente.serviciosFrecuentes.map((servicio, index) => (
+                                                                        <span key={index} className="px-2 py-1 bg-primary-100 text-primary-800 text-xs rounded-full">
+                                                                            {servicio}
+                                                                        </span>
+                                                                    ))}
+                                                                </div>
+                                                            </div>
+                                                            {cliente.notas && (
+                                                                <p className="text-sm text-gray-500 mt-2 italic">📝 {cliente.notas}</p>
+                                                            )}
                                                         </div>
-                                                    </div>
-                                                </div>
-                                                <div className="text-right">
-                                                    <p className="text-2xl font-bold text-primary-600">{formatPrice(cliente.totalGastado)}</p>
-                                                    <p className="text-sm text-gray-600">Total gastado</p>
-                                                    {cliente.vip && (
-                                                        <span className="inline-block mt-2 px-3 py-1 bg-yellow-100 text-yellow-800 text-xs font-semibold rounded-full">
-                                                            Cliente VIP
-                                                        </span>
-                                                    )}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
-
-                        {activeTab === 'inventario' && (
-                            <div className="space-y-6">
-                                <div className="bg-white rounded-xl shadow-sm p-6">
-                                    <div className="flex justify-between items-center">
-                                        <h2 className="text-2xl font-bold text-gray-900">Control de Inventario</h2>
-                                        <button className="bg-primary-500 text-white px-6 py-2 rounded-lg hover:bg-primary-600 transition-colors font-medium">
-                                            + Agregar Producto
-                                        </button>
-                                    </div>
-                                </div>
-
-                                <div className="grid gap-6">
-                                    {inventario.map(producto => (
-                                        <div key={producto.id} className="bg-white rounded-xl shadow-sm p-6 border-l-4 border-primary-500">
-                                            <div className="flex justify-between items-center">
-                                                <div>
-                                                    <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-                                                        📦 {producto.nombre}
-                                                    </h3>
-                                                    <p className="text-gray-600">{producto.categoria}</p>
-                                                    <div className="mt-2 flex items-center gap-4 text-sm">
-                                                        <span className="text-gray-600">Stock: <span className="font-semibold">{producto.stock}</span></span>
-                                                        <span className="text-gray-600">Mínimo: {producto.stockMinimo}</span>
-                                                    </div>
-                                                </div>
-                                                <div className="text-right">
-                                                    <p className="text-xl font-bold text-gray-900">{formatPrice(producto.precio)}</p>
-                                                    {producto.stock <= producto.stockMinimo ? (
-                                                        <span className="inline-block mt-2 px-3 py-1 bg-red-100 text-red-800 text-xs font-semibold rounded-full">
-                                                            ⚠️ Stock Bajo
-                                                        </span>
-                                                    ) : (
-                                                        <span className="inline-block mt-2 px-3 py-1 bg-green-100 text-green-800 text-xs font-semibold rounded-full">
-                                                            ✅ Stock OK
-                                                        </span>
-                                                    )}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
-
-                        {activeTab === 'finanzas' && (
-                            <div className="space-y-6">
-                                <div className="bg-white rounded-xl shadow-sm p-6">
-                                    <h2 className="text-2xl font-bold text-gray-900">Panel Financiero</h2>
-                                </div>
-
-                                <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                                    {[
-                                        { label: 'Ingresos Hoy', value: '$185.000', color: 'green', icon: '💰', change: '+12%' },
-                                        { label: 'Ingresos Mes', value: '$3.750.000', color: 'blue', icon: '📈', change: '+8%' },
-                                        { label: 'Comisiones', value: '$450.000', color: 'yellow', icon: '👥', change: '-2%' },
-                                        { label: 'Servicios Hoy', value: '12', color: 'purple', icon: '✂️', change: '+15%' }
-                                    ].map((stat, i) => (
-                                        <div key={i} className="bg-white rounded-xl shadow-sm p-6">
-                                            <div className="flex items-center justify-between mb-4">
-                                                <span className="text-3xl">{stat.icon}</span>
-                                                <span className={`text-sm font-medium ${stat.change.startsWith('+') ? 'text-green-600' : 'text-red-600'}`}>
-                                                    {stat.change}
-                                                </span>
-                                            </div>
-                                            <h3 className="text-sm font-medium text-gray-600">{stat.label}</h3>
-                                            <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
-                                        </div>
-                                    ))}
-                                </div>
-
-                                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                                    <div className="bg-white rounded-xl shadow-sm p-6">
-                                        <h3 className="text-lg font-semibold text-gray-900 mb-4">Ingresos por Profesional</h3>
-                                        <div className="space-y-4">
-                                            {profesionales.map((prof, index) => {
-                                                const ingresos = [1250000, 980000, 1100000, 850000][index];
-                                                const percentage = (ingresos / 1250000) * 100;
-                                                return (
-                                                    <div key={prof.id}>
-                                                        <div className="flex justify-between text-sm mb-2">
-                                                            <span className="font-medium">{prof.nombre}</span>
-                                                            <span className="text-gray-600">{formatPrice(ingresos)}</span>
-                                                        </div>
-                                                        <div className="w-full bg-gray-200 rounded-full h-3">
-                                                            <div 
-                                                                className="h-3 rounded-full bg-primary-500 transition-all duration-500"
-                                                                style={{width: `${percentage}%`}}
-                                                            ></div>
-                                                        </div>
-                                                    </div>
-                                                );
-                                            })}
-                                        </div>
-                                    </div>
-
-                                    <div className="bg-white rounded-xl shadow-sm p-6">
-                                        <h3 className="text-lg font-semibold text-gray-900 mb-4">Servicios Más Populares</h3>
-                                        <div className="space-y-3">
-                                            {[
-                                                { servicio: 'Corte Mujer', cantidad: 45, ingresos: 1125000 },
-                                                { servicio: 'Tinte', cantidad: 28, ingresos: 1260000 },
-                                                { servicio: 'Corte Hombre', cantidad: 52, ingresos: 936000 },
-                                                { servicio: 'Peinado', cantidad: 15, ingresos: 450000 }
-                                            ].map((item, index) => (
-                                                <div key={index} className="flex justify-between items-center p-4 bg-gray-50 rounded-lg">
-                                                    <div>
-                                                        <div className="font-medium text-gray-900">{item.servicio}</div>
-                                                        <div className="text-sm text-gray-600">{item.cantidad} servicios</div>
                                                     </div>
                                                     <div className="text-right">
-                                                        <div className="font-semibold text-gray-900">{formatPrice(item.ingresos)}</div>
-                                                    </div>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        )}
-
-                        {activeTab === 'marketing' && (
-                            <div className="space-y-6">
-                                <div className="bg-white rounded-xl shadow-sm p-6">
-                                    <h2 className="text-2xl font-bold text-gray-900">Marketing Automatizado</h2>
-                                </div>
-
-                                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                                    <div className="bg-white rounded-xl shadow-sm p-6">
-                                        <h3 className="text-lg font-semibold text-gray-900 mb-4">Campañas Automáticas</h3>
-                                        <div className="space-y-4">
-                                            {[
-                                                { nombre: 'Recordatorio de Cita', estado: 'activa', envios: 15, descripcion: 'Recordatorio 24h antes' },
-                                                { nombre: 'Clientes Inactivos', estado: 'activa', envios: 8, descripcion: 'Sin visita por 60 días' },
-                                                { nombre: 'Cumpleaños VIP', estado: 'pausada', envios: 3, descripcion: 'Descuento especial' }
-                                            ].map((campana, index) => (
-                                                <div key={index} className="border border-gray-200 rounded-lg p-4">
-                                                    <div className="flex justify-between items-start mb-2">
-                                                        <h4 className="font-medium text-gray-900">{campana.nombre}</h4>
-                                                        <span className={`px-2 py-1 text-xs rounded-full ${
-                                                            campana.estado === 'activa' 
-                                                                ? 'bg-green-100 text-green-800' 
-                                                                : 'bg-yellow-100 text-yellow-800'
-                                                        }`}>
-                                                            {campana.estado === 'activa' ? '✅ Activa' : '⏸️ Pausada'}
-                                                        </span>
-                                                    </div>
-                                                    <p className="text-sm text-gray-600 mb-2">{campana.descripcion}</p>
-                                                    <div className="flex justify-between items-center">
-                                                        <span className="text-sm text-gray-500">📊 {campana.envios} mensajes este mes</span>
-                                                        <div className="flex space-x-2">
-                                                            <button className="text-blue-600 hover:text-blue-900 text-sm font-medium">Editar</button>
-                                                            <button className="text-gray-600 hover:text-gray-900 text-sm font-medium">
-                                                                {campana.estado === 'activa' ? 'Pausar' : 'Activar'}
+                                                        <p className="text-3xl font-bold text-primary-600 mb-1">{formatPrice(cliente.totalGastado)}</p>
+                                                        <p className="text-sm text-gray-600 mb-2">Total gastado</p>
+                                                        {cliente.vip ? (
+                                                            <span className="inline-block px-3 py-1 bg-gradient-to-r from-yellow-100 to-yellow-200 text-yellow-800 text-xs font-semibold rounded-full shadow-md">
+                                                                ⭐ Cliente VIP
+                                                            </span>
+                                                        ) : (
+                                                            <span className="inline-block px-3 py-1 bg-gray-100 text-gray-600 text-xs font-semibold rounded-full">
+                                                                👤 Cliente Regular
+                                                            </span>
+                                                        )}
+                                                        <div className="flex gap-2 mt-3">
+                                                            <button 
+                                                                className="bg-green-500 text-white px-3 py-1 rounded-lg hover:bg-green-600 transition-colors text-xs font-medium shadow-md hover:shadow-lg transform hover:scale-105"
+                                                                onClick={() => window.open(`https://wa.me/${cliente.telefono.replace(/[^0-9]/g, '')}?text=Hola ${cliente.nombre}, desde ${salonInfo.nombre} queremos saludarte!`, '_blank')}
+                                                            >
+                                                                📱 WhatsApp
+                                                            </button>
+                                                            <button className="bg-blue-500 text-white px-3 py-1 rounded-lg hover:bg-blue-600 transition-colors text-xs font-medium shadow-md hover:shadow-lg transform hover:scale-105">
+                                                                ✏️ Editar
                                                             </button>
                                                         </div>
                                                     </div>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    </div>
-
-                                    <div className="bg-white rounded-xl shadow-sm p-6">
-                                        <h3 className="text-lg font-semibold text-gray-900 mb-4">Mensajes Rápidos</h3>
-                                        <div className="space-y-3 mb-6">
-                                            {[
-                                                '✅ Confirmar cita de mañana',
-                                                '🎉 Promoción fin de semana',
-                                                '💊 Recordatorio tratamiento',
-                                                '🎊 Invitación evento especial'
-                                            ].map((mensaje, index) => (
-                                                <button 
-                                                    key={index}
-                                                    className="w-full text-left p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
-                                                >
-                                                    <div className="flex items-center justify-between">
-                                                        <span className="text-sm text-gray-900">{mensaje}</span>
-                                                        <span className="text-gray-400">📱</span>
-                                                    </div>
-                                                </button>
-                                            ))}
-                                        </div>
-                                        
-                                        <div>
-                                            <h4 className="font-medium text-gray-900 mb-3">📣 Envío Masivo</h4>
-                                            <textarea 
-                                                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 mb-3"
-                                                rows="3"
-                                                placeholder="Escribe tu mensaje personalizado..."
-                                            ></textarea>
-                                            <div className="flex justify-between items-center">
-                                                <select className="border border-gray-300 rounded-lg px-3 py-2 text-sm">
-                                                    <option>Todos los clientes</option>
-                                                    <option>Solo VIP</option>
-                                                    <option>Clientes activos</option>
-                                                    <option>Clientes inactivos</option>
-                                                </select>
-                                                <button className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors text-sm font-medium">
-                                                    📱 Enviar WhatsApp
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        )}
-
-                        {activeTab === 'configuracion' && (
-                            <div className="space-y-6">
-                                <div className="bg-white rounded-xl shadow-sm p-6">
-                                    <h2 className="text-2xl font-bold text-gray-900">Configuración del Sistema</h2>
-                                </div>
-
-                                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                                    <div className="bg-white rounded-xl shadow-sm p-6">
-                                        <h3 className="text-lg font-semibold text-gray-900 mb-4">Información del Salón</h3>
-                                        <div className="space-y-4">
-                                            <div>
-                                                <label className="block text-sm font-medium text-gray-700 mb-1">Nombre del Salón</label>
-                                                <input 
-                                                    type="text" 
-                                                    value={salonInfo.nombre}
-                                                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-primary-500 focus:border-primary-500"
-                                                    readOnly
-                                                />
-                                            </div>
-                                            <div>
-                                                <label className="block text-sm font-medium text-gray-700 mb-1">Dirección</label>
-                                                <input 
-                                                    type="text" 
-                                                    value={salonInfo.direccion}
-                                                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-primary-500 focus:border-primary-500"
-                                                    readOnly
-                                                />
-                                            </div>
-                                            <div>
-                                                <label className="block text-sm font-medium text-gray-700 mb-1">Teléfono</label>
-                                                <input 
-                                                    type="text" 
-                                                    value={salonInfo.telefono}
-                                                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-primary-500 focus:border-primary-500"
-                                                    readOnly
-                                                />
-                                            </div>
-                                            <div>
-                                                <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                                                <input 
-                                                    type="email" 
-                                                    value={salonInfo.email}
-                                                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-primary-500 focus:border-primary-500"
-                                                    readOnly
-                                                />
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div className="bg-white rounded-xl shadow-sm p-6">
-                                        <h3 className="text-lg font-semibold text-gray-900 mb-4">Equipo de Profesionales</h3>
-                                        <div className="space-y-3">
-                                            {profesionales.map(prof => (
-                                                <div key={prof.id} className="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
-                                                    <div className="flex items-center gap-3">
-                                                        <div 
-                                                            className="w-4 h-4 rounded-full" 
-                                                            style={{backgroundColor: prof.color}}
-                                                        ></div>
-                                                        <div>
-                                                            <div className="font-medium text-gray-900">{prof.nombre}</div>
-                                                            <div className="text-sm text-gray-600">{prof.especialidad}</div>
-                                                        </div>
-                                                    </div>
-                                                    <div className="flex items-center space-x-2">
-                                                        <button className="text-blue-600 hover:text-blue-900 transition-colors">✏️</button>
-                                                        <button className="text-red-600 hover:text-red-900 transition-colors">🗑️</button>
-                                                    </div>
-                                                </div>
-                                            ))}
-                                        </div>
-                                        <button className="w-full mt-4 bg-primary-500 text-white py-2 rounded-lg hover:bg-primary-600 transition-colors font-medium">
-                                            + Agregar Profesional
-                                        </button>
-                                    </div>
-                                </div>
-
-                                <div className="bg-white rounded-xl shadow-sm p-6">
-                                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Servicios y Precios</h3>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        {servicios.map(servicio => (
-                                            <div key={servicio.id} className="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
-                                                <div>
-                                                    <div className="font-medium text-gray-900">{servicio.nombre}</div>
-                                                    <div className="text-sm text-gray-600">{servicio.duracion} min • {servicio.categoria}</div>
-                                                </div>
-                                                <div className="text-right">
-                                                    <div className="font-semibold text-primary-600">{formatPrice(servicio.precio)}</div>
-                                                    <button className="text-blue-600 hover:text-blue-900 text-sm">✏️</button>
                                                 </div>
                                             </div>
                                         ))}
                                     </div>
                                 </div>
-                            </div>
-                        )}
+                            )}
+
+                            {activeTab === 'inventario' && (
+                                <div className="space-y-6">
+                                    <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
+                                        <div className="flex justify-between items-center">
+                                            <div>
+                                                <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+                                                    📦 Control de Inventario
+                                                </h2>
+                                                <p className="text-gray-600 mt-1">Gestión completa de productos y stock</p>
+                                            </div>
+                                            <button className="bg-gradient-to-r from-primary-500 to-primary-600 text-white px-6 py-2 rounded-lg hover:from-primary-600 hover:to-primary-700 transition-all duration-200 font-medium shadow-md hover:shadow-lg transform hover:scale-105">
+                                                + Agregar Producto
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    {/* Resumen de inventario */}
+                                    <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                                        {[
+                                            { label: 'Total Productos', value: inventario.length, icon: '📦', color: 'blue' },
+                                            { label: 'Stock Bajo', value: inventario.filter(p => p.stock <= p.stockMinimo).length, icon: '⚠️', color: 'red' },
+                                            { label: 'Valor Total', value: formatPrice(inventario.reduce((total, p) => total + (p.stock * p.precio), 0)), icon: '💰', color: 'green' },
+                                            { label: 'Proveedores', value: new Set(inventario.map(p => p.proveedor)).size, icon: '🏪', color: 'purple' }
+                                        ].map((stat, i) => (
+                                            <div key={i} className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-primary-500">
+                                                <div className="flex items-center justify-between">
+                                                    <div>
+                                                        <p className="text-sm font-medium text-gray-600">{stat.label}</p>
+                                                        <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
+                                                    </div>
+                                                    <span className="text-3xl">{stat.icon}</span>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+
+                                    <div className="grid gap-6">
+                                        {inventario.map(producto => (
+                                            <div key={producto.id} className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-primary-500 hover:shadow-xl transition-shadow duration-200">
+                                                <div className="flex justify-between items-center">
+                                                    <div className="flex items-center gap-4">
+                                                        <div className="w-12 h-12 bg-gradient-to-r from-primary-500 to-primary-600 rounded-full flex items-center justify-center text-white text-xl">
+                                                            📦
+                                                        </div>
+                                                        <div>
+                                                            <h3 className="text-lg font-semibold text-gray-900">{producto.nombre}</h3>
+                                                            <div className="flex items-center gap-4 text-sm text-gray-600 mt-1">
+                                                                <span>🏷️ {producto.categoria}</span>
+                                                                <span>🏪 {producto.proveedor}</span>
+                                                            </div>
+                                                            <div className="flex items-center gap-4 text-sm mt-2">
+                                                                <span className="text-gray-700">
+                                                                    <strong>Stock:</strong> {producto.stock} unidades
+                                                                </span>
+                                                                <span className="text-gray-600">
+                                                                    Mínimo: {producto.stockMinimo}
+                                                                </span>
+                                                                <span className="text-gray-600">
+                                                                    Valor: {formatPrice(producto.stock * producto.precio)}
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div className="text-right">
+                                                        <p className="text-xl font-bold text-gray-900">{formatPrice(producto.precio)}</p>
+                                                        <p className="text-sm text-gray-600 mb-2">por unidad</p>
+                                                        {producto.stock <= producto.stockMinimo ? (
+                                                            <span className="inline-block px-3 py-1 bg-red-100 text-red-800 text-xs font-semibold rounded-full animate-pulse shadow-md">
+                                                                ⚠️ Stock Crítico
+                                                            </span>
+                                                        ) : producto.stock <= producto.stockMinimo * 2 ? (
+                                                            <span className="inline-block px-3 py-1 bg-yellow-100 text-yellow-800 text-xs font-semibold rounded-full shadow-md">
+                                                                ⚡ Stock Bajo
+                                                            </span>
+                                                        ) : (
+                                                            <span className="inline-block px-3 py-1 bg-green-100 text-green-800 text-xs font-semibold rounded-full shadow-md">
+                                                                ✅ Stock OK
+                                                            </span>
+                                                        )}
+                                                        <div className="flex gap-2 mt-3">
+                                                            <button className="bg-blue-500 text-white px-3 py-1 rounded-lg hover:bg-blue-600 transition-colors text-xs font-medium shadow-md hover:shadow-lg transform hover:scale-105">
+                                                                ✏️ Editar
+                                                            </button>
+                                                            <button className="bg-green-500 text-white px-3 py-1 rounded-lg hover:bg-green-600 transition-colors text-xs font-medium shadow-md hover:shadow-lg transform hover:scale-105">
+                                                                ➕ Reabastecer
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
+                            {activeTab === 'finanzas' && (
+                                <div className="space-y-6">
+                                    <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
+                                        <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+                                            💰 Panel Financiero
+                                        </h2>
+                                        <p className="text-gray-600 mt-1">Reportes e ingresos del salón</p>
+                                    </div>
+
+                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                                        {[
+                                            { label: 'Ingresos Hoy', value: formatPrice(estadisticas.ingresosDia), color: 'green', icon: '💰', change: '+12%', bgGradient: 'from-green-500 to-green-600' },
+                                            { label: 'Ingresos Mes', value: '$3.750.000', color: 'blue', icon: '📈', change: '+8%', bgGradient: 'from-blue-500 to-blue-600' },
+                                            { label: 'Comisiones', value: '$562.500', color: 'yellow', icon: '👥', change: '-2%', bgGradient: 'from-yellow-500 to-yellow-600' },
+                                            { label: 'Servicios Hoy', value: estadisticas.confirmadas, color: 'purple', icon: '✂️', change: '+15%', bgGradient: 'from-purple-500 to-purple-600' }
+                                        ].map((stat, i) => (
+                                            <div key={i} className="bg-white rounded-xl shadow-lg p-6 border border-gray-100 hover:shadow-xl transition-shadow duration-200">
+                                                <div className="flex items-center justify-between mb-4">
+                                                    <div className={`p-3 rounded-full bg-gradient-to-r ${stat.bgGradient} text-white shadow-lg`}>
+                                                        <span className="text-xl">{stat.icon}</span>
+                                                    </div>
+                                                    <span className={`text-sm font-medium px-2 py-1 rounded-full ${stat.change.startsWith('+') ? 'text-green-600 bg-green-100' : 'text-red-600 bg-red-100'}`}>
+                                                        {stat.change}
+                                                    </span>
+                                                </div>
+                                                <h3 className="text-sm font-medium text-gray-600 mb-1">{stat.label}</h3>
+                                                <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
+                                            </div>
+                                        ))}
+                                    </div>
+
+                                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                        <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
+                                            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                                                👥 Ingresos por Profesional
+                                            </h3>
+                                            <div className="space-y-4">
+                                                {profesionales.map((prof, index) => {
+                                                    const ingresos = [1350000, 1180000, 1220000, 950000][index];
+                                                    const percentage = (ingresos / 1350000) * 100;
+                                                    return (
+                                                        <div key={prof.id}>
+                                                            <div className="flex justify-between items-center text-sm mb-2">
+                                                                <span className="font-medium flex items-center gap-2">
+                                                                    <div 
+                                                                        className="w-3 h-3 rounded-full" 
+                                                                        style={{backgroundColor: prof.color}}
+                                                                    ></div>
+                                                                    {prof.nombre}
+                                                                </span>
+                                                                <span className="text-gray-600 font-semibold">{formatPrice(ingresos)}</span>
+                                                            </div>
+                                                            <div className="w-full bg-gray-200 rounded-full h-3 shadow-inner">
+                                                                <div 
+                                                                    className="h-3 rounded-full bg-gradient-to-r from-primary-500 to-primary-600 transition-all duration-1000 shadow-md"
+                                                                    style={{width: `${percentage}%`}}
+                                                                ></div>
+                                                            </div>
+                                                        </div>
+                                                    );
+                                                })}
+                                            </div>
+                                        </div>
+
+                                        <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
+                                            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                                                ⭐ Servicios Más Populares
+                                            </h3>
+                                            <div className="space-y-3">
+                                                {[
+                                                    { servicio: 'Corte Mujer', cantidad: 48, ingresos: 1344000, icon: '✂️' },
+                                                    { servicio: 'Tinte Global', cantidad: 32, ingresos: 1536000, icon: '🎨' },
+                                                    { servicio: 'Corte Hombre', cantidad: 65, ingresos: 1300000, icon: '👨' },
+                                                    { servicio: 'Mechas/Highlights', cantidad: 18, ingresos: 1170000, icon: '🌟' },
+                                                    { servicio: 'Manicure Spa', cantidad: 42, ingresos: 756000, icon: '💅' }
+                                                ].map((item, index) => (
+                                                    <div key={index} className="flex justify-between items-center p-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg border border-gray-200 hover:shadow-md transition-shadow duration-200">
+                                                        <div className="flex items-center gap-3">
+                                                            <span className="text-2xl">{item.icon}</span>
+                                                            <div>
+                                                                <div className="font-medium text-gray-900">{item.servicio}</div>
+                                                                <div className="text-sm text-gray-600">{item.cantidad} servicios realizados</div>
+                                                            </div>
+                                                        </div>
+                                                        <div className="text-right">
+                                                            <div className="font-semibold text-primary-600">{formatPrice(item.ingresos)}</div>
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {activeTab === 'marketing' && (
+                                <div className="space-y-6">
+                                    <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
+                                        <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+                                            📱 Marketing Automatizado
+                                        </h2>
+                                        <p className="text-gray-600 mt-1">Campañas automáticas y comunicación con clientes</p>
+                                    </div>
+
+                                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                        <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
+                                            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                                                🤖 Campañas Automáticas
+                                            </h3>
+                                            <div className="space-y-4">
+                                                {[
+                                                    { nombre: 'Recordatorio de Cita', estado: 'activa', envios: 18, descripcion: 'Recordatorio 24h antes de la cita', icon: '⏰' },
+                                                    { nombre: 'Clientes Inactivos', estado: 'activa', envios: 12, descripcion: 'Recuperación de clientes sin visita por 60 días', icon: '💤' },
+                                                    { nombre: 'Cumpleaños VIP', estado: 'pausada', envios: 5, descripcion: 'Descuento especial por cumpleaños', icon: '🎂' },
+                                                    { nombre: 'Post-Servicio', estado: 'activa', envios: 25, descripcion: 'Agradecimiento y solicitud de feedback', icon: '💕' }
+                                                ].map((campana, index) => (
+                                                    <div key={index} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow duration-200">
+                                                        <div className="flex justify-between items-start mb-2">
+                                                            <h4 className="font-medium text-gray-900 flex items-center gap-2">
+                                                                <span className="text-xl">{campana.icon}</span>
+                                                                {campana.nombre}
+                                                            </h4>
+                                                            <span className={`px-3 py-1 text-xs rounded-full font-medium ${
+                                                                campana.estado === 'activa' 
+                                                                    ? 'bg-green-100 text-green-800' 
+                                                                    : 'bg-yellow-100 text-yellow-800'
+                                                            }`}>
+                                                                {campana.estado === 'activa' ? '✅ Activa' : '⏸️ Pausada'}
+                                                            </span>
+                                                        </div>
+                                                        <p className="text-sm text-gray-600 mb-3">{campana.descripcion}</p>
+                                                        <div className="flex justify-between items-center">
+                                                            <span className="text-sm text-gray-500 flex items-center gap-1">
+                                                                📊 {campana.envios} mensajes enviados este mes
+                                                            </span>
+                                                            <div className="flex space-x-2">
+                                                                <button className="text-blue-600 hover:text-blue-900 text-sm font-medium transition-colors hover:bg-blue-50 px-2 py-1 rounded">
+                                                                    ✏️ Editar
+                                                                </button>
+                                                                <button className="text-gray-600 hover:text-gray-900 text-sm font-medium transition-colors hover:bg-gray-50 px-2 py-1 rounded">
+                                                                    {campana.estado === 'activa' ? '⏸️ Pausar' : '▶️ Activar'}
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+
+                                        <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
+                                            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                                                💬 Mensajes Rápidos
+                                            </h3>
+                                            <div className="space-y-3 mb-6">
+                                                {[
+                                                    { mensaje: '✅ Confirmar cita de mañana', icon: '⏰' },
+                                                    { mensaje: '🎉 Promoción fin de semana 20% OFF', icon: '💰' },
+                                                    { mensaje: '💊 Recordatorio tratamiento de keratina', icon: '💆‍♀️' },
+                                                    { mensaje: '🎊 Te invitamos a nuestro evento especial', icon: '🎪' },
+                                                    { mensaje: '😍 ¡Gracias por confiar en nosotros!', icon: '💕' }
+                                                ].map((template, index) => (
+                                                    <button 
+                                                        key={index}
+                                                        className="w-full text-left p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors hover:shadow-md duration-200"
+                                                    >
+                                                        <div className="flex items-center justify-between">
+                                                            <span className="text-sm text-gray-900 flex items-center gap-2">
+                                                                <span className="text-lg">{template.icon}</span>
+                                                                {template.mensaje}
+                                                            </span>
+                                                            <span className="text-gray-400 hover:text-primary-500 transition-colors">📱</span>
+                                                        </div>
+                                                    </button>
+                                                ))}
+                                            </div>
+                                            
+                                            <div>
+                                                <h4 className="font-medium text-gray-900 mb-3 flex items-center gap-2">
+                                                    📣 Envío Masivo Personalizado
+                                                </h4>
+                                                <textarea 
+                                                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 mb-3 transition-colors"
+                                                    rows="4"
+                                                    placeholder="¡Hola! Desde Nuevos Aires Huecuraba queremos invitarte a nuestra promoción especial..."
+                                                ></textarea>
+                                                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                                                    <select className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors">
+                                                        <option>👥 Todos los clientes ({clientes.length})</option>
+                                                        <option>⭐ Solo VIP ({clientes.filter(c => c.vip).length})</option>
+                                                        <option>🔥 Clientes activos (últimos 30 días)</option>
+                                                        <option>💤 Clientes inactivos (+60 días)</option>
+                                                    </select>
+                                                    <button className="bg-gradient-to-r from-green-500 to-green-600 text-white px-6 py-2 rounded-lg hover:from-green-600 hover:to-green-700 transition-all duration-200 text-sm font-medium shadow-md hover:shadow-lg transform hover:scale-105">
+                                                        📱 Enviar via WhatsApp
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {activeTab === 'configuracion' && (
+                                <div className="space-y-6">
+                                    <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
+                                        <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+                                            ⚙️ Configuración del Sistema
+                                        </h2>
+                                        <p className="text-gray-600 mt-1">Configuración general del salón y profesionales</p>
+                                    </div>
+
+                                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                        <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
+                                            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                                                🏪 Información del Salón
+                                            </h3>
+                                            <div className="space-y-4">
+                                                <div>
+                                                    <label className="block text-sm font-medium text-gray-700 mb-2">Nombre del Salón</label>
+                                                    <input 
+                                                        type="text" 
+                                                        value={salonInfo.nombre}
+                                                        className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
+                                                        readOnly
+                                                    />
+                                                </div>
+                                                <div>
+                                                    <label className="block text-sm font-medium text-gray-700 mb-2">Dirección Completa</label>
+                                                    <input 
+                                                        type="text" 
+                                                        value={salonInfo.direccion}
+                                                        className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
+                                                        readOnly
+                                                    />
+                                                </div>
+                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                    <div>
+                                                        <label className="block text-sm font-medium text-gray-700 mb-2">Teléfono</label>
+                                                        <input 
+                                                            type="text" 
+                                                            value={salonInfo.telefono}
+                                                            className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
+                                                            readOnly
+                                                        />
+                                                    </div>
+                                                    <div>
+                                                        <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                                                        <input 
+                                                            type="email" 
+                                                            value={salonInfo.email}
+                                                            className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
+                                                            readOnly
+                                                        />
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <label className="block text-sm font-medium text-gray-700 mb-2">Redes Sociales</label>
+                                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                        <input 
+                                                            type="text" 
+                                                            value={salonInfo.redes.instagram}
+                                                            className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
+                                                            placeholder="Instagram"
+                                                            readOnly
+                                                        />
+                                                        <input 
+                                                            type="text" 
+                                                            value={salonInfo.redes.facebook}
+                                                            className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
+                                                            placeholder="Facebook"
+                                                            readOnly
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
+                                            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                                                👥 Equipo de Profesionales
+                                            </h3>
+                                            <div className="space-y-3 mb-4">
+                                                {profesionales.map(prof => (
+                                                    <div key={prof.id} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:shadow-md transition-shadow duration-200">
+                                                        <div className="flex items-center gap-3">
+                                                            <div 
+                                                                className="w-5 h-5 rounded-full shadow-md" 
+                                                                style={{backgroundColor: prof.color}}
+                                                            ></div>
+                                                            <div>
+                                                                <div className="font-medium text-gray-900">{prof.nombre}</div>
+                                                                <div className="text-sm text-gray-600">{prof.especialidad} • {prof.experiencia}</div>
+                                                                <div className="text-xs text-gray-500">🕐 {prof.horario}</div>
+                                                            </div>
+                                                        </div>
+                                                        <div className="flex items-center space-x-2">
+                                                            <span className={`w-2 h-2 rounded-full ${prof.activo ? 'bg-green-500' : 'bg-red-500'}`}></span>
+                                                            <button className="text-blue-600 hover:text-blue-900 transition-colors text-sm hover:bg-blue-50 px-2 py-1 rounded">✏️</button>
+                                                            <button className="text-red-600 hover:text-red-900 transition-colors text-sm hover:bg-red-50 px-2 py-1 rounded">🗑️</button>
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                            <button className="w-full bg-gradient-to-r from-primary-500 to-primary-600 text-white py-3 rounded-lg hover:from-primary-600 hover:to-primary-700 transition-all duration-200 font-medium shadow-md hover:shadow-lg transform hover:scale-105">
+                                                + Agregar Profesional
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
+                                        <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                                            ✂️ Servicios y Precios
+                                        </h3>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                            {servicios.map(servicio => (
+                                                <div key={servicio.id} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:shadow-md transition-shadow duration-200">
+                                                    <div>
+                                                        <div className="font-medium text-gray-900">{servicio.nombre}</div>
+                                                        <div className="text-sm text-gray-600">{servicio.duracion} min • {servicio.categoria}</div>
+                                                        {servicio.descripcion && (
+                                                            <div className="text-xs text-gray-500 mt-1">{servicio.descripcion}</div>
+                                                        )}
+                                                    </div>
+                                                    <div className="text-right">
+                                                        <div className="font-semibold text-primary-600">{formatPrice(servicio.precio)}</div>
+                                                        <button className="text-blue-600 hover:text-blue-900 text-sm mt-1 hover:bg-blue-50 px-2 py-1 rounded transition-colors">✏️</button>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                        <button className="w-full mt-4 bg-gradient-to-r from-primary-500 to-primary-600 text-white py-3 rounded-lg hover:from-primary-600 hover:to-primary-700 transition-all duration-200 font-medium shadow-md hover:shadow-lg transform hover:scale-105">
+                                            + Agregar Servicio
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
                     </div>
 
-                    {/* Footer */}
-                    <footer className="bg-white border-t border-gray-200 mt-12">
-                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-                            <div className="flex justify-between items-center">
-                                <p className="text-gray-600 text-sm">
-                                    © 2025 Nuevos Aires Huecuraba. Sistema de Agenda Online.
-                                </p>
-                                <div className="flex space-x-4 text-sm text-gray-600">
-                                    <span>📞 {salonInfo.telefono}</span>
-                                    <span>📧 {salonInfo.email}</span>
+                    {/* Footer mejorado */}
+                    <footer className="bg-gradient-to-r from-gray-800 to-gray-900 text-white mt-12">
+                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                <div>
+                                    <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                                        ✂️ {salonInfo.nombre}
+                                    </h3>
+                                    <p className="text-gray-300 text-sm mb-2">Sistema de Agenda Online Profesional</p>
+                                    <p className="text-gray-400 text-sm">© 2025 Todos los derechos reservados</p>
+                                </div>
+                                <div>
+                                    <h4 className="font-medium mb-3">📍 Contacto</h4>
+                                    <div className="space-y-2 text-sm text-gray-300">
+                                        <p>{salonInfo.direccion}</p>
+                                        <p>📞 {salonInfo.telefono}</p>
+                                        <p>📧 {salonInfo.email}</p>
+                                    </div>
+                                </div>
+                                <div>
+                                    <h4 className="font-medium mb-3">🕐 Horarios</h4>
+                                    <div className="space-y-1 text-sm text-gray-300">
+                                        {Object.entries(salonInfo.horarios).map(([dia, horario]) => (
+                                            <p key={dia}>{dia}: {horario}</p>
+                                        ))}
+                                    </div>
                                 </div>
                             </div>
                         </div>
