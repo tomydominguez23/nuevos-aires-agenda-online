@@ -1,0 +1,82 @@
+# robots.txt para Nuevos Aires Huecuraba - Sistema de Agenda Online
+# URL: https://tomydominguez23.github.io/nuevos-aires-agenda-online/
+
+User-agent: *
+Allow: /
+
+# Archivos y directorios permitidos
+Allow: /index.html
+Allow: /manifest.json
+Allow: /sw.js
+Allow: /offline.html
+Allow: /sitemap.xml
+
+# Archivos de configuración (no necesarios para indexar)
+Disallow: /.github/
+Disallow: /package.json
+Disallow: /postcss.config.js
+Disallow: /tailwind.config.js
+Disallow: /.gitignore
+Disallow: /CONTRIBUTING.md
+Disallow: /LICENSE
+
+# Permitir acceso a todas las secciones de la aplicación
+Allow: /?tab=agenda
+Allow: /?tab=clientes
+Allow: /?tab=inventario
+Allow: /?tab=finanzas
+Allow: /?tab=marketing
+Allow: /?tab=configuracion
+
+# URLs con parámetros permitidas
+Allow: /?action=*
+Allow: /?handler=*
+
+# Bots específicos de redes sociales
+User-agent: facebookexternalhit
+Allow: /
+
+User-agent: Twitterbot
+Allow: /
+
+User-agent: LinkedInBot
+Allow: /
+
+User-agent: WhatsApp
+Allow: /
+
+# Bots de Google específicos
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 1
+
+User-agent: Googlebot-Image
+Allow: /
+Allow: /*.png
+Allow: /*.jpg
+Allow: /*.jpeg
+Allow: /*.svg
+Allow: /*.webp
+
+User-agent: Googlebot-Mobile
+Allow: /
+Crawl-delay: 1
+
+# Bing
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 2
+
+# Yandex
+User-agent: YandexBot
+Allow: /
+Crawl-delay: 3
+
+# Sitemap
+Sitemap: https://tomydominguez23.github.io/nuevos-aires-agenda-online/sitemap.xml
+
+# Información adicional del sitio
+# Nombre: Nuevos Aires Huecuraba - Sistema de Agenda Online
+# Descripción: Sistema de agenda online profesional para salón de belleza
+# Contacto: tomasdominguezcarrizo.23@gmail.com
+# Última actualización: 2025-08-04
