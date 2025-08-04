@@ -3,60 +3,116 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nuevos Aires Huecuraba - Agenda Online</title>
-    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <title>Nuevos Aires Huecuraba - Sistema de Agenda Online</title>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
                         primary: {
+                            50: '#fdf2f8',
+                            100: '#fce7f3', 
+                            200: '#fbcfe8',
+                            300: '#f9a8d4',
+                            400: '#f472b6',
                             500: '#ec4899',
                             600: '#db2777',
-                            700: '#be185d'
+                            700: '#be185d',
+                            800: '#9d174d',
+                            900: '#831843'
                         }
+                    },
+                    fontFamily: {
+                        'inter': ['Inter', 'sans-serif']
                     }
                 }
             }
         }
     </script>
+    
     <style>
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             margin: 0;
             padding: 0;
+            background: #f8fafc;
+        }
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #ec4899, #be185d);
+            color: white;
+            font-size: 24px;
         }
     </style>
 </head>
 <body>
-    <div id="root"></div>
+    <div id="root">
+        <div class="loading">
+            <div>
+                <div style="text-align: center;">
+                    <div style="font-size: 48px; margin-bottom: 20px;">✂️</div>
+                    <div>Cargando Nuevos Aires Huecuraba...</div>
+                    <div style="font-size: 14px; margin-top: 10px; opacity: 0.8;">Sistema de Agenda Online</div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script type="text/babel">
-        const { useState } = React;
+        const { useState, useEffect } = React;
 
-        const App = () => {
+        const NuevosAiresApp = () => {
             const [activeTab, setActiveTab] = useState('agenda');
             const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
+            const [searchTerm, setSearchTerm] = useState('');
+            const [loading, setLoading] = useState(true);
 
+            useEffect(() => {
+                // Simular carga inicial
+                setTimeout(() => setLoading(false), 1000);
+            }, []);
+
+            // Datos del salón
+            const salonInfo = {
+                nombre: 'Nuevos Aires Huecuraba',
+                direccion: 'Av. Pedro Fontova 6651, local 27',
+                telefono: '+56 9 1234 5678',
+                email: 'contacto@nuevosaireshuechuraba.com'
+            };
+
+            // Profesionales
             const profesionales = [
-                { id: 1, nombre: 'María González', especialidad: 'Estilista Senior', color: '#FF6B6B' },
-                { id: 2, nombre: 'Carlos Ruiz', especialidad: 'Estilista', color: '#4ECDC4' },
-                { id: 3, nombre: 'Ana López', especialidad: 'Estilista', color: '#45B7D1' },
-                { id: 4, nombre: 'Sofía Martín', especialidad: 'Colorista/Recepción', color: '#96CEB4' }
+                { id: 1, nombre: 'María González', especialidad: 'Estilista Senior', color: '#FF6B6B', activo: true },
+                { id: 2, nombre: 'Carlos Ruiz', especialidad: 'Estilista', color: '#4ECDC4', activo: true },
+                { id: 3, nombre: 'Ana López', especialidad: 'Estilista', color: '#45B7D1', activo: true },
+                { id: 4, nombre: 'Sofía Martín', especialidad: 'Colorista/Recepción', color: '#96CEB4', activo: true }
             ];
 
+            // Servicios
             const servicios = [
-                { id: 1, nombre: 'Corte Mujer', precio: 25000, duracion: 45 },
-                { id: 2, nombre: 'Corte Hombre', precio: 18000, duracion: 30 },
-                { id: 3, nombre: 'Peinado', precio: 30000, duracion: 60 },
-                { id: 4, nombre: 'Tinte', precio: 45000, duracion: 120 },
-                { id: 5, nombre: 'Mechas', precio: 55000, duracion: 180 }
+                { id: 1, nombre: 'Corte Mujer', precio: 25000, duracion: 45, categoria: 'Corte' },
+                { id: 2, nombre: 'Corte Hombre', precio: 18000, duracion: 30, categoria: 'Corte' },
+                { id: 3, nombre: 'Peinado', precio: 30000, duracion: 60, categoria: 'Peinado' },
+                { id: 4, nombre: 'Tinte', precio: 45000, duracion: 120, categoria: 'Color' },
+                { id: 5, nombre: 'Mechas', precio: 55000, duracion: 180, categoria: 'Color' },
+                { id: 6, nombre: 'Tratamiento Capilar', precio: 35000, duracion: 90, categoria: 'Tratamiento' },
+                { id: 7, nombre: 'Manicure', precio: 15000, duracion: 45, categoria: 'Uñas' },
+                { id: 8, nombre: 'Pedicure', precio: 18000, duracion: 60, categoria: 'Uñas' }
             ];
 
-            const citas = [
+            // Citas
+            const [citas] = useState([
                 {
                     id: 1,
                     clienteNombre: 'Laura Pérez',
@@ -64,7 +120,8 @@
                     servicioId: 1,
                     fecha: selectedDate,
                     hora: '10:00',
-                    estado: 'confirmada'
+                    estado: 'confirmada',
+                    notas: 'Primera vez en el salón'
                 },
                 {
                     id: 2,
@@ -73,7 +130,8 @@
                     servicioId: 4,
                     fecha: selectedDate,
                     hora: '14:30',
-                    estado: 'pendiente'
+                    estado: 'pendiente',
+                    notas: 'Cambio de look radical'
                 },
                 {
                     id: 3,
@@ -82,22 +140,52 @@
                     servicioId: 3,
                     fecha: selectedDate,
                     hora: '16:00',
-                    estado: 'confirmada'
+                    estado: 'confirmada',
+                    notas: 'Evento especial'
+                }
+            ]);
+
+            // Clientes
+            const clientes = [
+                {
+                    id: 1,
+                    nombre: 'Laura Pérez',
+                    telefono: '+56912345678',
+                    email: 'laura@email.com',
+                    ultimaVisita: '2025-07-20',
+                    totalGastado: 180000,
+                    vip: true
+                },
+                {
+                    id: 2,
+                    nombre: 'Roberto Silva',
+                    telefono: '+56987654321',
+                    email: 'roberto@email.com',
+                    ultimaVisita: '2025-07-28',
+                    totalGastado: 85000,
+                    vip: false
+                },
+                {
+                    id: 3,
+                    nombre: 'Carmen Torres',
+                    telefono: '+56955555555',
+                    email: 'carmen@email.com',
+                    ultimaVisita: '2025-08-01',
+                    totalGastado: 320000,
+                    vip: true
                 }
             ];
 
-            const clientes = [
-                { id: 1, nombre: 'Laura Pérez', telefono: '+56912345678', totalGastado: 180000, vip: true },
-                { id: 2, nombre: 'Roberto Silva', telefono: '+56987654321', totalGastado: 85000, vip: false },
-                { id: 3, nombre: 'Carmen Torres', telefono: '+56955555555', totalGastado: 320000, vip: true }
-            ];
-
+            // Inventario
             const inventario = [
-                { id: 1, nombre: 'Shampoo Reparador', stock: 15, stockMinimo: 5, precio: 12000 },
-                { id: 2, nombre: 'Tinte Chocolate', stock: 3, stockMinimo: 5, precio: 8500 },
-                { id: 3, nombre: 'Acondicionador', stock: 8, stockMinimo: 5, precio: 13000 }
+                { id: 1, nombre: 'Shampoo Reparador', categoria: 'Cuidado Capilar', stock: 15, stockMinimo: 5, precio: 12000 },
+                { id: 2, nombre: 'Acondicionador', categoria: 'Cuidado Capilar', stock: 8, stockMinimo: 5, precio: 13000 },
+                { id: 3, nombre: 'Tinte Chocolate', categoria: 'Coloración', stock: 3, stockMinimo: 5, precio: 8500 },
+                { id: 4, nombre: 'Tijeras Profesionales', categoria: 'Herramientas', stock: 12, stockMinimo: 3, precio: 45000 },
+                { id: 5, nombre: 'Esmalte Rojo', categoria: 'Uñas', stock: 20, stockMinimo: 8, precio: 3500 }
             ];
 
+            // Funciones auxiliares
             const getProfesionalNombre = (id) => {
                 const prof = profesionales.find(p => p.id === id);
                 return prof ? prof.nombre : 'No asignado';
@@ -110,10 +198,10 @@
 
             const getEstadoColor = (estado) => {
                 switch(estado) {
-                    case 'confirmada': return 'text-green-600 bg-green-100';
-                    case 'pendiente': return 'text-yellow-600 bg-yellow-100';
-                    case 'cancelada': return 'text-red-600 bg-red-100';
-                    default: return 'text-gray-600 bg-gray-100';
+                    case 'confirmada': return 'text-green-700 bg-green-100 border-green-200';
+                    case 'pendiente': return 'text-yellow-700 bg-yellow-100 border-yellow-200';
+                    case 'cancelada': return 'text-red-700 bg-red-100 border-red-200';
+                    default: return 'text-gray-700 bg-gray-100 border-gray-200';
                 }
             };
 
@@ -128,18 +216,41 @@
                 { id: 'configuracion', name: 'Configuración', icon: '⚙️' }
             ];
 
+            const citasFiltradas = citas.filter(cita => 
+                cita.fecha === selectedDate &&
+                (searchTerm === '' || 
+                 cita.clienteNombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                 getProfesionalNombre(cita.profesionalId).toLowerCase().includes(searchTerm.toLowerCase()))
+            );
+
+            if (loading) {
+                return (
+                    <div className="loading">
+                        <div style={{textAlign: 'center'}}>
+                            <div style={{fontSize: '48px', marginBottom: '20px'}}>✂️</div>
+                            <div>Cargando Nuevos Aires Huecuraba...</div>
+                            <div style={{fontSize: '14px', marginTop: '10px', opacity: 0.8}}>Sistema de Agenda Online</div>
+                        </div>
+                    </div>
+                );
+            }
+
             return (
-                <div className="min-h-screen bg-gray-50">
+                <div className="min-h-screen bg-gray-50 font-inter">
                     {/* Header */}
                     <header className="bg-gradient-to-r from-primary-500 to-primary-700 shadow-lg">
                         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                             <div className="flex justify-between items-center h-16">
                                 <div className="flex items-center">
-                                    <span className="text-2xl mr-3">✂️</span>
-                                    <h1 className="text-xl font-bold text-white">Nuevos Aires Huecuraba</h1>
+                                    <span className="text-3xl mr-3">✂️</span>
+                                    <div>
+                                        <h1 className="text-xl font-bold text-white">Nuevos Aires Huecuraba</h1>
+                                        <p className="text-primary-100 text-sm">Sistema de Agenda Online</p>
+                                    </div>
                                 </div>
-                                <div className="text-white text-sm">
-                                    Sistema de Agenda Online
+                                <div className="text-white text-sm text-right">
+                                    <div className="font-medium">Administrador</div>
+                                    <div className="text-primary-200">{new Date().toLocaleDateString('es-CL')}</div>
                                 </div>
                             </div>
                         </div>
@@ -147,93 +258,171 @@
 
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                         {/* Navigation */}
-                        <nav className="flex flex-wrap space-x-2 mb-8 bg-white p-4 rounded-lg shadow">
+                        <nav className="flex flex-wrap gap-2 mb-8 bg-white p-4 rounded-xl shadow-sm">
                             {tabs.map(tab => (
                                 <button
                                     key={tab.id}
                                     onClick={() => setActiveTab(tab.id)}
-                                    className={`flex items-center px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                                    className={`flex items-center px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
                                         activeTab === tab.id
-                                            ? 'bg-primary-500 text-white'
-                                            : 'text-gray-600 hover:text-primary-600 hover:bg-gray-100'
+                                            ? 'bg-primary-500 text-white shadow-md transform scale-105'
+                                            : 'text-gray-600 hover:text-primary-600 hover:bg-primary-50'
                                     }`}
                                 >
-                                    <span className="mr-2">{tab.icon}</span>
+                                    <span className="mr-2 text-base">{tab.icon}</span>
                                     {tab.name}
                                 </button>
                             ))}
                         </nav>
 
-                        {/* Contenido */}
+                        {/* Contenido por pestañas */}
                         {activeTab === 'agenda' && (
                             <div className="space-y-6">
-                                <div className="bg-white rounded-lg shadow p-6">
+                                {/* Controles */}
+                                <div className="bg-white rounded-xl shadow-sm p-6">
                                     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-4 sm:space-y-0">
-                                        <h2 className="text-xl font-semibold text-gray-900">Agenda del Día</h2>
-                                        <input
-                                            type="date"
-                                            value={selectedDate}
-                                            onChange={(e) => setSelectedDate(e.target.value)}
-                                            className="border border-gray-300 rounded-md px-3 py-2"
-                                        />
+                                        <h2 className="text-2xl font-bold text-gray-900">Agenda del Día</h2>
+                                        <div className="flex flex-col sm:flex-row gap-4">
+                                            <input
+                                                type="date"
+                                                value={selectedDate}
+                                                onChange={(e) => setSelectedDate(e.target.value)}
+                                                className="border border-gray-300 rounded-lg px-3 py-2 focus:ring-primary-500 focus:border-primary-500"
+                                            />
+                                            <input
+                                                type="text"
+                                                placeholder="Buscar cliente..."
+                                                value={searchTerm}
+                                                onChange={(e) => setSearchTerm(e.target.value)}
+                                                className="border border-gray-300 rounded-lg px-3 py-2 focus:ring-primary-500 focus:border-primary-500"
+                                            />
+                                            <button className="bg-primary-500 text-white px-6 py-2 rounded-lg hover:bg-primary-600 transition-colors font-medium">
+                                                + Nueva Cita
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
 
-                                <div className="bg-white rounded-lg shadow overflow-hidden">
-                                    <table className="min-w-full divide-y divide-gray-200">
-                                        <thead className="bg-gray-50">
-                                            <tr>
-                                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Hora</th>
-                                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Cliente</th>
-                                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Profesional</th>
-                                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Servicio</th>
-                                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Estado</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody className="bg-white divide-y divide-gray-200">
-                                            {citas.map(cita => (
-                                                <tr key={cita.id} className="hover:bg-gray-50">
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                                        {cita.hora}
-                                                    </td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                        {cita.clienteNombre}
-                                                    </td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                        {getProfesionalNombre(cita.profesionalId)}
-                                                    </td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                        {getServicioNombre(cita.servicioId)}
-                                                    </td>
-                                                    <td className="px-6 py-4 whitespace-nowrap">
-                                                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getEstadoColor(cita.estado)}`}>
-                                                            {cita.estado}
-                                                        </span>
-                                                    </td>
+                                {/* Estadísticas */}
+                                <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                                    {[
+                                        { label: 'Citas Hoy', value: citasFiltradas.length, color: 'blue', icon: '📅' },
+                                        { label: 'Confirmadas', value: citasFiltradas.filter(c => c.estado === 'confirmada').length, color: 'green', icon: '✅' },
+                                        { label: 'Pendientes', value: citasFiltradas.filter(c => c.estado === 'pendiente').length, color: 'yellow', icon: '⏳' },
+                                        { label: 'Canceladas', value: citasFiltradas.filter(c => c.estado === 'cancelada').length, color: 'red', icon: '❌' }
+                                    ].map((stat, i) => (
+                                        <div key={i} className="bg-white rounded-xl shadow-sm p-6 border-l-4 border-primary-500">
+                                            <div className="flex items-center justify-between">
+                                                <div>
+                                                    <p className="text-sm font-medium text-gray-600">{stat.label}</p>
+                                                    <p className="text-3xl font-bold text-gray-900">{stat.value}</p>
+                                                </div>
+                                                <span className="text-3xl">{stat.icon}</span>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+
+                                {/* Lista de citas */}
+                                <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+                                    <div className="px-6 py-4 border-b border-gray-200 bg-gray-50">
+                                        <h3 className="text-lg font-semibold text-gray-900">Citas del Día</h3>
+                                    </div>
+                                    <div className="overflow-x-auto">
+                                        <table className="min-w-full divide-y divide-gray-200">
+                                            <thead className="bg-gray-50">
+                                                <tr>
+                                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Hora</th>
+                                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cliente</th>
+                                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Profesional</th>
+                                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Servicio</th>
+                                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
+                                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
                                                 </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
+                                            </thead>
+                                            <tbody className="bg-white divide-y divide-gray-200">
+                                                {citasFiltradas.length > 0 ? citasFiltradas.map(cita => (
+                                                    <tr key={cita.id} className="hover:bg-gray-50 transition-colors">
+                                                        <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">
+                                                            🕐 {cita.hora}
+                                                        </td>
+                                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                                            {cita.clienteNombre}
+                                                        </td>
+                                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                                            {getProfesionalNombre(cita.profesionalId)}
+                                                        </td>
+                                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                                            {getServicioNombre(cita.servicioId)}
+                                                        </td>
+                                                        <td className="px-6 py-4 whitespace-nowrap">
+                                                            <span className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full border ${getEstadoColor(cita.estado)}`}>
+                                                                {cita.estado.charAt(0).toUpperCase() + cita.estado.slice(1)}
+                                                            </span>
+                                                        </td>
+                                                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                                            <div className="flex space-x-2">
+                                                                <button className="text-blue-600 hover:text-blue-900 transition-colors">👁️</button>
+                                                                <button className="text-green-600 hover:text-green-900 transition-colors">✏️</button>
+                                                                <button className="text-red-600 hover:text-red-900 transition-colors">🗑️</button>
+                                                                <button className="text-green-600 hover:text-green-900 transition-colors">📱</button>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                )) : (
+                                                    <tr>
+                                                        <td colSpan="6" className="px-6 py-8 text-center text-gray-500">
+                                                            <div className="text-4xl mb-2">📅</div>
+                                                            <div>No hay citas para esta fecha</div>
+                                                        </td>
+                                                    </tr>
+                                                )}
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
                             </div>
                         )}
 
                         {activeTab === 'clientes' && (
-                            <div className="bg-white rounded-lg shadow p-6">
-                                <h2 className="text-xl font-semibold text-gray-900 mb-4">Gestión de Clientes</h2>
-                                <div className="grid gap-4">
+                            <div className="space-y-6">
+                                <div className="bg-white rounded-xl shadow-sm p-6">
+                                    <div className="flex justify-between items-center">
+                                        <h2 className="text-2xl font-bold text-gray-900">Gestión de Clientes</h2>
+                                        <button className="bg-primary-500 text-white px-6 py-2 rounded-lg hover:bg-primary-600 transition-colors font-medium">
+                                            + Nuevo Cliente
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div className="grid gap-6">
                                     {clientes.map(cliente => (
-                                        <div key={cliente.id} className="border border-gray-200 rounded-lg p-4">
-                                            <div className="flex justify-between items-center">
-                                                <div>
-                                                    <h3 className="font-medium text-gray-900">
-                                                        {cliente.nombre} {cliente.vip && <span className="text-yellow-500">⭐</span>}
-                                                    </h3>
-                                                    <p className="text-gray-600">{cliente.telefono}</p>
+                                        <div key={cliente.id} className="bg-white rounded-xl shadow-sm p-6 border-l-4 border-primary-500">
+                                            <div className="flex justify-between items-start">
+                                                <div className="flex items-center space-x-4">
+                                                    <div className="w-12 h-12 bg-primary-500 rounded-full flex items-center justify-center text-white font-bold text-lg">
+                                                        {cliente.nombre.charAt(0)}
+                                                    </div>
+                                                    <div>
+                                                        <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                                                            {cliente.nombre}
+                                                            {cliente.vip && <span className="text-yellow-500 text-xl">⭐</span>}
+                                                        </h3>
+                                                        <div className="space-y-1 text-sm text-gray-600">
+                                                            <p>📞 {cliente.telefono}</p>
+                                                            <p>📧 {cliente.email}</p>
+                                                            <p>📅 Última visita: {new Date(cliente.ultimaVisita).toLocaleDateString('es-CL')}</p>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                                 <div className="text-right">
-                                                    <p className="font-semibold text-gray-900">{formatPrice(cliente.totalGastado)}</p>
+                                                    <p className="text-2xl font-bold text-primary-600">{formatPrice(cliente.totalGastado)}</p>
                                                     <p className="text-sm text-gray-600">Total gastado</p>
+                                                    {cliente.vip && (
+                                                        <span className="inline-block mt-2 px-3 py-1 bg-yellow-100 text-yellow-800 text-xs font-semibold rounded-full">
+                                                            Cliente VIP
+                                                        </span>
+                                                    )}
                                                 </div>
                                             </div>
                                         </div>
@@ -243,20 +432,40 @@
                         )}
 
                         {activeTab === 'inventario' && (
-                            <div className="bg-white rounded-lg shadow p-6">
-                                <h2 className="text-xl font-semibold text-gray-900 mb-4">Control de Inventario</h2>
-                                <div className="grid gap-4">
+                            <div className="space-y-6">
+                                <div className="bg-white rounded-xl shadow-sm p-6">
+                                    <div className="flex justify-between items-center">
+                                        <h2 className="text-2xl font-bold text-gray-900">Control de Inventario</h2>
+                                        <button className="bg-primary-500 text-white px-6 py-2 rounded-lg hover:bg-primary-600 transition-colors font-medium">
+                                            + Agregar Producto
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div className="grid gap-6">
                                     {inventario.map(producto => (
-                                        <div key={producto.id} className="border border-gray-200 rounded-lg p-4">
+                                        <div key={producto.id} className="bg-white rounded-xl shadow-sm p-6 border-l-4 border-primary-500">
                                             <div className="flex justify-between items-center">
                                                 <div>
-                                                    <h3 className="font-medium text-gray-900">{producto.nombre}</h3>
-                                                    <p className="text-gray-600">Stock: {producto.stock}</p>
+                                                    <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                                                        📦 {producto.nombre}
+                                                    </h3>
+                                                    <p className="text-gray-600">{producto.categoria}</p>
+                                                    <div className="mt-2 flex items-center gap-4 text-sm">
+                                                        <span className="text-gray-600">Stock: <span className="font-semibold">{producto.stock}</span></span>
+                                                        <span className="text-gray-600">Mínimo: {producto.stockMinimo}</span>
+                                                    </div>
                                                 </div>
                                                 <div className="text-right">
-                                                    <p className="font-semibold text-gray-900">{formatPrice(producto.precio)}</p>
-                                                    {producto.stock <= producto.stockMinimo && (
-                                                        <span className="text-red-600 text-sm">⚠️ Stock bajo</span>
+                                                    <p className="text-xl font-bold text-gray-900">{formatPrice(producto.precio)}</p>
+                                                    {producto.stock <= producto.stockMinimo ? (
+                                                        <span className="inline-block mt-2 px-3 py-1 bg-red-100 text-red-800 text-xs font-semibold rounded-full">
+                                                            ⚠️ Stock Bajo
+                                                        </span>
+                                                    ) : (
+                                                        <span className="inline-block mt-2 px-3 py-1 bg-green-100 text-green-800 text-xs font-semibold rounded-full">
+                                                            ✅ Stock OK
+                                                        </span>
                                                     )}
                                                 </div>
                                             </div>
@@ -267,67 +476,73 @@
                         )}
 
                         {activeTab === 'finanzas' && (
-                            <div className="bg-white rounded-lg shadow p-6">
-                                <h2 className="text-xl font-semibold text-gray-900 mb-4">Panel Financiero</h2>
-                                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                    <div className="bg-green-50 p-4 rounded-lg">
-                                        <h3 className="text-lg font-semibold text-green-800">Ingresos Hoy</h3>
-                                        <p className="text-2xl font-bold text-green-900">$185.000</p>
-                                    </div>
-                                    <div className="bg-blue-50 p-4 rounded-lg">
-                                        <h3 className="text-lg font-semibold text-blue-800">Ingresos Mes</h3>
-                                        <p className="text-2xl font-bold text-blue-900">$3.750.000</p>
-                                    </div>
-                                    <div className="bg-yellow-50 p-4 rounded-lg">
-                                        <h3 className="text-lg font-semibold text-yellow-800">Comisiones</h3>
-                                        <p className="text-2xl font-bold text-yellow-900">$450.000</p>
-                                    </div>
+                            <div className="space-y-6">
+                                <div className="bg-white rounded-xl shadow-sm p-6">
+                                    <h2 className="text-2xl font-bold text-gray-900">Panel Financiero</h2>
                                 </div>
-                            </div>
-                        )}
 
-                        {activeTab === 'marketing' && (
-                            <div className="bg-white rounded-lg shadow p-6">
-                                <h2 className="text-xl font-semibold text-gray-900 mb-4">Marketing Automatizado</h2>
-                                <div className="space-y-4">
-                                    <div className="border border-gray-200 rounded-lg p-4">
-                                        <h3 className="font-medium text-gray-900">Recordatorios de Cita</h3>
-                                        <p className="text-gray-600">Envío automático 24h antes</p>
-                                        <span className="text-green-600 text-sm">✅ Activo</span>
-                                    </div>
-                                    <div className="border border-gray-200 rounded-lg p-4">
-                                        <h3 className="font-medium text-gray-900">Recuperación de Clientes</h3>
-                                        <p className="text-gray-600">Para clientes sin visita por 60 días</p>
-                                        <span className="text-green-600 text-sm">✅ Activo</span>
-                                    </div>
+                                <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                                    {[
+                                        { label: 'Ingresos Hoy', value: '$185.000', color: 'green', icon: '💰', change: '+12%' },
+                                        { label: 'Ingresos Mes', value: '$3.750.000', color: 'blue', icon: '📈', change: '+8%' },
+                                        { label: 'Comisiones', value: '$450.000', color: 'yellow', icon: '👥', change: '-2%' },
+                                        { label: 'Servicios Hoy', value: '12', color: 'purple', icon: '✂️', change: '+15%' }
+                                    ].map((stat, i) => (
+                                        <div key={i} className="bg-white rounded-xl shadow-sm p-6">
+                                            <div className="flex items-center justify-between mb-4">
+                                                <span className="text-3xl">{stat.icon}</span>
+                                                <span className={`text-sm font-medium ${stat.change.startsWith('+') ? 'text-green-600' : 'text-red-600'}`}>
+                                                    {stat.change}
+                                                </span>
+                                            </div>
+                                            <h3 className="text-sm font-medium text-gray-600">{stat.label}</h3>
+                                            <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
+                                        </div>
+                                    ))}
                                 </div>
-                            </div>
-                        )}
 
-                        {activeTab === 'configuracion' && (
-                            <div className="bg-white rounded-lg shadow p-6">
-                                <h2 className="text-xl font-semibold text-gray-900 mb-4">Configuración</h2>
-                                <div className="space-y-6">
-                                    <div>
-                                        <h3 className="text-lg font-medium text-gray-900 mb-2">Información del Salón</h3>
-                                        <div className="grid gap-4">
-                                            <div>
-                                                <label className="block text-sm font-medium text-gray-700">Nombre</label>
-                                                <input type="text" value="Nuevos Aires Huecuraba" className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2" />
-                                            </div>
-                                            <div>
-                                                <label className="block text-sm font-medium text-gray-700">Dirección</label>
-                                                <input type="text" value="Av. Pedro Fontova 6651, local 27" className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2" />
-                                            </div>
+                                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                    <div className="bg-white rounded-xl shadow-sm p-6">
+                                        <h3 className="text-lg font-semibold text-gray-900 mb-4">Ingresos por Profesional</h3>
+                                        <div className="space-y-4">
+                                            {profesionales.map((prof, index) => {
+                                                const ingresos = [1250000, 980000, 1100000, 850000][index];
+                                                const percentage = (ingresos / 1250000) * 100;
+                                                return (
+                                                    <div key={prof.id}>
+                                                        <div className="flex justify-between text-sm mb-2">
+                                                            <span className="font-medium">{prof.nombre}</span>
+                                                            <span className="text-gray-600">{formatPrice(ingresos)}</span>
+                                                        </div>
+                                                        <div className="w-full bg-gray-200 rounded-full h-3">
+                                                            <div 
+                                                                className="h-3 rounded-full bg-primary-500 transition-all duration-500"
+                                                                style={{width: `${percentage}%`}}
+                                                            ></div>
+                                                        </div>
+                                                    </div>
+                                                );
+                                            })}
                                         </div>
                                     </div>
-                                    <div>
-                                        <h3 className="text-lg font-medium text-gray-900 mb-2">Profesionales</h3>
-                                        <div className="space-y-2">
-                                            {profesionales.map(prof => (
-                                                <div key={prof.id} className="flex justify-between items-center p-2 border border-gray-200 rounded">
-                                                    <span>{prof.nombre} - {prof.especialidad}</span>
-                                                    <button className="text-primary-600 hover:text-primary-800">Editar</button>
+
+                                    <div className="bg-white rounded-xl shadow-sm p-6">
+                                        <h3 className="text-lg font-semibold text-gray-900 mb-4">Servicios Más Populares</h3>
+                                        <div className="space-y-3">
+                                            {[
+                                                { servicio: 'Corte Mujer', cantidad: 45, ingresos: 1125000 },
+                                                { servicio: 'Tinte', cantidad: 28, ingresos: 1260000 },
+                                                { servicio: 'Corte Hombre', cantidad: 52, ingresos: 936000 },
+                                                { servicio: 'Peinado', cantidad: 15, ingresos: 450000 }
+                                            ].map((item, index) => (
+                                                <div key={index} className="flex justify-between items-center p-4 bg-gray-50 rounded-lg">
+                                                    <div>
+                                                        <div className="font-medium text-gray-900">{item.servicio}</div>
+                                                        <div className="text-sm text-gray-600">{item.cantidad} servicios</div>
+                                                    </div>
+                                                    <div className="text-right">
+                                                        <div className="font-semibold text-gray-900">{formatPrice(item.ingresos)}</div>
+                                                    </div>
                                                 </div>
                                             ))}
                                         </div>
@@ -335,12 +550,211 @@
                                 </div>
                             </div>
                         )}
+
+                        {activeTab === 'marketing' && (
+                            <div className="space-y-6">
+                                <div className="bg-white rounded-xl shadow-sm p-6">
+                                    <h2 className="text-2xl font-bold text-gray-900">Marketing Automatizado</h2>
+                                </div>
+
+                                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                    <div className="bg-white rounded-xl shadow-sm p-6">
+                                        <h3 className="text-lg font-semibold text-gray-900 mb-4">Campañas Automáticas</h3>
+                                        <div className="space-y-4">
+                                            {[
+                                                { nombre: 'Recordatorio de Cita', estado: 'activa', envios: 15, descripcion: 'Recordatorio 24h antes' },
+                                                { nombre: 'Clientes Inactivos', estado: 'activa', envios: 8, descripcion: 'Sin visita por 60 días' },
+                                                { nombre: 'Cumpleaños VIP', estado: 'pausada', envios: 3, descripcion: 'Descuento especial' }
+                                            ].map((campana, index) => (
+                                                <div key={index} className="border border-gray-200 rounded-lg p-4">
+                                                    <div className="flex justify-between items-start mb-2">
+                                                        <h4 className="font-medium text-gray-900">{campana.nombre}</h4>
+                                                        <span className={`px-2 py-1 text-xs rounded-full ${
+                                                            campana.estado === 'activa' 
+                                                                ? 'bg-green-100 text-green-800' 
+                                                                : 'bg-yellow-100 text-yellow-800'
+                                                        }`}>
+                                                            {campana.estado === 'activa' ? '✅ Activa' : '⏸️ Pausada'}
+                                                        </span>
+                                                    </div>
+                                                    <p className="text-sm text-gray-600 mb-2">{campana.descripcion}</p>
+                                                    <div className="flex justify-between items-center">
+                                                        <span className="text-sm text-gray-500">📊 {campana.envios} mensajes este mes</span>
+                                                        <div className="flex space-x-2">
+                                                            <button className="text-blue-600 hover:text-blue-900 text-sm font-medium">Editar</button>
+                                                            <button className="text-gray-600 hover:text-gray-900 text-sm font-medium">
+                                                                {campana.estado === 'activa' ? 'Pausar' : 'Activar'}
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    <div className="bg-white rounded-xl shadow-sm p-6">
+                                        <h3 className="text-lg font-semibold text-gray-900 mb-4">Mensajes Rápidos</h3>
+                                        <div className="space-y-3 mb-6">
+                                            {[
+                                                '✅ Confirmar cita de mañana',
+                                                '🎉 Promoción fin de semana',
+                                                '💊 Recordatorio tratamiento',
+                                                '🎊 Invitación evento especial'
+                                            ].map((mensaje, index) => (
+                                                <button 
+                                                    key={index}
+                                                    className="w-full text-left p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+                                                >
+                                                    <div className="flex items-center justify-between">
+                                                        <span className="text-sm text-gray-900">{mensaje}</span>
+                                                        <span className="text-gray-400">📱</span>
+                                                    </div>
+                                                </button>
+                                            ))}
+                                        </div>
+                                        
+                                        <div>
+                                            <h4 className="font-medium text-gray-900 mb-3">📣 Envío Masivo</h4>
+                                            <textarea 
+                                                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 mb-3"
+                                                rows="3"
+                                                placeholder="Escribe tu mensaje personalizado..."
+                                            ></textarea>
+                                            <div className="flex justify-between items-center">
+                                                <select className="border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                                                    <option>Todos los clientes</option>
+                                                    <option>Solo VIP</option>
+                                                    <option>Clientes activos</option>
+                                                    <option>Clientes inactivos</option>
+                                                </select>
+                                                <button className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors text-sm font-medium">
+                                                    📱 Enviar WhatsApp
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {activeTab === 'configuracion' && (
+                            <div className="space-y-6">
+                                <div className="bg-white rounded-xl shadow-sm p-6">
+                                    <h2 className="text-2xl font-bold text-gray-900">Configuración del Sistema</h2>
+                                </div>
+
+                                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                    <div className="bg-white rounded-xl shadow-sm p-6">
+                                        <h3 className="text-lg font-semibold text-gray-900 mb-4">Información del Salón</h3>
+                                        <div className="space-y-4">
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-700 mb-1">Nombre del Salón</label>
+                                                <input 
+                                                    type="text" 
+                                                    value={salonInfo.nombre}
+                                                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-primary-500 focus:border-primary-500"
+                                                    readOnly
+                                                />
+                                            </div>
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-700 mb-1">Dirección</label>
+                                                <input 
+                                                    type="text" 
+                                                    value={salonInfo.direccion}
+                                                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-primary-500 focus:border-primary-500"
+                                                    readOnly
+                                                />
+                                            </div>
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-700 mb-1">Teléfono</label>
+                                                <input 
+                                                    type="text" 
+                                                    value={salonInfo.telefono}
+                                                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-primary-500 focus:border-primary-500"
+                                                    readOnly
+                                                />
+                                            </div>
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                                                <input 
+                                                    type="email" 
+                                                    value={salonInfo.email}
+                                                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-primary-500 focus:border-primary-500"
+                                                    readOnly
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="bg-white rounded-xl shadow-sm p-6">
+                                        <h3 className="text-lg font-semibold text-gray-900 mb-4">Equipo de Profesionales</h3>
+                                        <div className="space-y-3">
+                                            {profesionales.map(prof => (
+                                                <div key={prof.id} className="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
+                                                    <div className="flex items-center gap-3">
+                                                        <div 
+                                                            className="w-4 h-4 rounded-full" 
+                                                            style={{backgroundColor: prof.color}}
+                                                        ></div>
+                                                        <div>
+                                                            <div className="font-medium text-gray-900">{prof.nombre}</div>
+                                                            <div className="text-sm text-gray-600">{prof.especialidad}</div>
+                                                        </div>
+                                                    </div>
+                                                    <div className="flex items-center space-x-2">
+                                                        <button className="text-blue-600 hover:text-blue-900 transition-colors">✏️</button>
+                                                        <button className="text-red-600 hover:text-red-900 transition-colors">🗑️</button>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                        <button className="w-full mt-4 bg-primary-500 text-white py-2 rounded-lg hover:bg-primary-600 transition-colors font-medium">
+                                            + Agregar Profesional
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div className="bg-white rounded-xl shadow-sm p-6">
+                                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Servicios y Precios</h3>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        {servicios.map(servicio => (
+                                            <div key={servicio.id} className="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
+                                                <div>
+                                                    <div className="font-medium text-gray-900">{servicio.nombre}</div>
+                                                    <div className="text-sm text-gray-600">{servicio.duracion} min • {servicio.categoria}</div>
+                                                </div>
+                                                <div className="text-right">
+                                                    <div className="font-semibold text-primary-600">{formatPrice(servicio.precio)}</div>
+                                                    <button className="text-blue-600 hover:text-blue-900 text-sm">✏️</button>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                        )}
                     </div>
+
+                    {/* Footer */}
+                    <footer className="bg-white border-t border-gray-200 mt-12">
+                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+                            <div className="flex justify-between items-center">
+                                <p className="text-gray-600 text-sm">
+                                    © 2025 Nuevos Aires Huecuraba. Sistema de Agenda Online.
+                                </p>
+                                <div className="flex space-x-4 text-sm text-gray-600">
+                                    <span>📞 {salonInfo.telefono}</span>
+                                    <span>📧 {salonInfo.email}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </footer>
                 </div>
             );
         };
 
-        ReactDOM.render(<App />, document.getElementById('root'));
+        // Render the app
+        ReactDOM.render(<NuevosAiresApp />, document.getElementById('root'));
     </script>
 </body>
 </html>
