@@ -1,0 +1,386 @@
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+/* Estilos personalizados para Nuevos Aires Huecuraba */
+
+/* Animaciones personalizadas */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(-20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+/* Aplicar animaciones */
+.fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.slide-in {
+  animation: slideIn 0.4s ease-out;
+}
+
+.pulse-hover:hover {
+  animation: pulse 0.3s ease-in-out;
+}
+
+/* Estilos específicos para el sistema de agenda */
+.app-container {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+}
+
+/* Header personalizado */
+.salon-header {
+  background: linear-gradient(135deg, #ec4899 0%, #be185d 100%);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+/* Navegación con efectos */
+.nav-tab {
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.nav-tab:hover {
+  transform: translateY(-1px);
+}
+
+.nav-tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #ec4899, #be185d);
+  border-radius: 2px;
+}
+
+/* Cards con efectos */
+.stat-card {
+  transition: all 0.3s ease;
+  border-radius: 12px;
+  background: white;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Tabla personalizada */
+.agenda-table {
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.agenda-table th {
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+  font-size: 0.75rem;
+  padding: 1rem 1.5rem;
+}
+
+.agenda-table td {
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.agenda-table tr:hover td {
+  background-color: #f8fafc;
+}
+
+/* Estados de las citas */
+.estado-confirmada {
+  background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+  color: #065f46;
+  border: 1px solid #a7f3d0;
+}
+
+.estado-pendiente {
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  color: #92400e;
+  border: 1px solid #fde68a;
+}
+
+.estado-cancelada {
+  background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+  color: #991b1b;
+  border: 1px solid #fecaca;
+}
+
+/* Botones personalizados */
+.btn-primary {
+  background: linear-gradient(135deg, #ec4899 0%, #be185d 100%);
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(236, 72, 153, 0.4);
+}
+
+.btn-secondary {
+  background: white;
+  color: #374151;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  border: 1px solid #d1d5db;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-secondary:hover {
+  background: #f9fafb;
+  border-color: #9ca3af;
+}
+
+/* Iconos de acción */
+.action-icon {
+  width: 1rem;
+  height: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.action-icon:hover {
+  transform: scale(1.1);
+}
+
+/* Formularios */
+.form-input {
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+  width: 100%;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #ec4899;
+  box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.1);
+}
+
+.form-label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 0.5rem;
+}
+
+/* Indicadores de stock */
+.stock-bajo {
+  background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+  color: #991b1b;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.stock-ok {
+  background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+  color: #065f46;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+/* Cliente VIP */
+.vip-badge {
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  color: #92400e;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+/* Barras de progreso */
+.progress-bar {
+  width: 100%;
+  height: 0.5rem;
+  background-color: #e5e7eb;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+/* Campañas de marketing */
+.campaign-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 1rem;
+  transition: all 0.3s ease;
+  background: white;
+}
+
+.campaign-card:hover {
+  border-color: #ec4899;
+  box-shadow: 0 2px 8px rgba(236, 72, 153, 0.1);
+}
+
+/* Configuración */
+.config-section {
+  background: white;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  margin-bottom: 1.5rem;
+}
+
+.config-section h3 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 1rem;
+}
+
+/* Avatar personalizado */
+.avatar {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ec4899 0%, #be185d 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .agenda-table {
+    font-size: 0.875rem;
+  }
+  
+  .agenda-table th,
+  .agenda-table td {
+    padding: 0.75rem 0.5rem;
+  }
+  
+  .stat-card {
+    padding: 1rem;
+  }
+  
+  .nav-tab {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .salon-header {
+    padding: 1rem;
+  }
+  
+  .config-section {
+    padding: 1rem;
+  }
+}
+
+/* Efectos especiales */
+.glass-effect {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, #ec4899 0%, #be185d 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Scrollbar personalizada */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #ec4899 0%, #be185d 100%);
+  border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #be185d 0%, #ec4899 100%);
+}
+
+/* Transiciones suaves para todos los elementos interactivos */
+* {
+  transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease, 
+             transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Mejoras específicas para móviles */
+@media (max-width: 480px) {
+  .app-container {
+    padding: 0.5rem;
+  }
+  
+  .stat-card {
+    padding: 0.75rem;
+  }
+  
+  .btn-primary,
+  .btn-secondary {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+  }
+  
+  .form-input {
+    padding: 0.5rem 0.75rem;
+  }
+}
