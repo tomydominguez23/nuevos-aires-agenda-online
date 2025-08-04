@@ -1,16 +1,9 @@
 {
   "name": "nuevos-aires-agenda-online",
   "version": "1.0.0",
-  "description": "Sistema de Agenda Online Integral para Nuevos Aires Huecuraba - Gestión completa de salón de belleza con reservas, inventario, finanzas y marketing automatizado",
+  "description": "Sistema de Agenda Online Integral para Nuevos Aires Huecuraba",
   "private": true,
   "homepage": "https://tomydominguez23.github.io/nuevos-aires-agenda-online",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/tomydominguez23/nuevos-aires-agenda-online.git"
-  },
-  "bugs": {
-    "url": "https://github.com/tomydominguez23/nuevos-aires-agenda-online/issues"
-  },
   "dependencies": {
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
@@ -23,41 +16,23 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build && npm run build:sw",
-    "build:sw": "echo 'Service Worker ya incluido en public/sw.js'",
+    "build": "react-scripts build",
     "test": "react-scripts test",
-    "test:coverage": "react-scripts test --coverage --watchAll=false",
     "eject": "react-scripts eject",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d build",
-    "analyze": "npm run build && npx bundle-analyzer build/static/js/*.js",
-    "lint": "eslint src/ --ext .js,.jsx,.ts,.tsx",
-    "lint:fix": "eslint src/ --ext .js,.jsx,.ts,.tsx --fix",
-    "format": "prettier --write src/**/*.{js,jsx,ts,tsx,css,md}",
-    "clean": "rm -rf build node_modules package-lock.json && npm install",
-    "serve": "npx serve -s build -l 3000",
-    "lighthouse": "npx lighthouse http://localhost:3000 --output html --output-path ./lighthouse-report.html",
-    "dev:https": "HTTPS=true npm start",
-    "build:analyze": "npm run build && npx webpack-bundle-analyzer build/static/js/*.js"
+    "deploy": "gh-pages -d build"
   },
   "eslintConfig": {
     "extends": [
       "react-app",
       "react-app/jest"
-    ],
-    "rules": {
-      "no-unused-vars": "warn",
-      "no-console": "warn",
-      "prefer-const": "error",
-      "no-var": "error"
-    }
+    ]
   },
   "browserslist": {
     "production": [
       ">0.2%",
       "not dead",
-      "not op_mini all",
-      "not ie <= 11"
+      "not op_mini all"
     ],
     "development": [
       "last 1 chrome version",
@@ -69,87 +44,6 @@
     "gh-pages": "^6.1.0",
     "tailwindcss": "^3.3.6",
     "autoprefixer": "^10.4.16",
-    "postcss": "^8.4.32",
-    "prettier": "^3.1.0",
-    "eslint": "^8.55.0",
-    "bundle-analyzer": "^0.1.0"
-  },
-  "keywords": [
-    "salon-belleza",
-    "agenda-online",
-    "gestion-salon",
-    "reservas",
-    "inventario",
-    "finanzas",
-    "marketing",
-    "pwa",
-    "react",
-    "tailwindcss",
-    "huechuraba",
-    "peluqueria",
-    "estetica",
-    "beauty-salon",
-    "appointment-booking",
-    "business-management"
-  ],
-  "author": {
-    "name": "Nuevos Aires Huecuraba",
-    "email": "contacto@nuevosaireshuechuraba.com",
-    "url": "https://nuevosaireshuechuraba.com"
-  },
-  "contributors": [
-    {
-      "name": "Tomás Domínguez",
-      "email": "tomasdominguezcarrizo.23@gmail.com",
-      "url": "https://github.com/tomydominguez23"
-    }
-  ],
-  "license": "MIT",
-  "engines": {
-    "node": ">=16.0.0",
-    "npm": ">=8.0.0"
-  },
-  "jest": {
-    "collectCoverageFrom": [
-      "src/**/*.{js,jsx}",
-      "!src/index.js",
-      "!src/reportWebVitals.js"
-    ],
-    "coverageThreshold": {
-      "global": {
-        "branches": 70,
-        "functions": 70,
-        "lines": 70,
-        "statements": 70
-      }
-    }
-  },
-  "prettier": {
-    "semi": true,
-    "singleQuote": true,
-    "trailingComma": "es5",
-    "tabWidth": 2,
-    "printWidth": 100
-  },
-  "postcss": {
-    "plugins": {
-      "tailwindcss": {},
-      "autoprefixer": {}
-    }
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
-  "lint-staged": {
-    "src/**/*.{js,jsx,ts,tsx}": [
-      "eslint --fix",
-      "prettier --write"
-    ],
-    "src/**/*.{css,scss,md}": [
-      "prettier --write"
-    ]
-  },
-  "packageManager": "npm@9.0.0"
+    "postcss": "^8.4.32"
+  }
 }
